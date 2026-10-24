@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b1020">
+<title>F&amp;O इंटेलिजेंस</title>
+<style>
+:root{--bg:#0b1020;--card:#131a2e;--card2:#1a2342;--line:#26325a;--tx:#e8ecf8;--mut:#93a0c4;--g:#22c55e;--r:#ef4444;--y:#eab308;--gr:#6b7280;--b:#60a5fa}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 "Noto Sans Devanagari",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:0 10px 90px}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0 6px;border-bottom:1px solid var(--line)}
+.row{display:flex;gap:8px;align-items:center}
+.seg{display:flex;flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.seg button{flex:1;min-height:44px;background:none;border:0;color:var(--mut);font:600 15px inherit;font-family:inherit}
+.seg button.on{background:var(--b);color:#06101f}
+.btn{min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font:600 14px inherit;font-family:inherit}
+.btn:disabled{opacity:.5}
+.btn.p{background:var(--b);color:#06101f;border-color:var(--b)}
+.meta{font-size:12px;color:var(--mut);margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
+.card h2{margin:0 0 6px;font-size:13px;color:var(--mut);font-weight:600;letter-spacing:.02em;text-transform:none}
+.big{font-size:30px;font-weight:700;letter-spacing:-.5px}
+.mut{color:var(--mut)}.sm{font-size:12px}
+.up{color:var(--g)}.dn{color:var(--r)}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;border:1px solid currentColor;vertical-align:middle}
+.b-live{color:var(--g)}.b-del{color:var(--y)}.b-last{color:#f59e0b}.b-closed{color:var(--mut)}.b-na{color:var(--r)}.b-manual{color:var(--b)}
+.sig{border-radius:14px;padding:14px;margin-top:10px;border:2px solid}
+.sig.green{border-color:var(--g);background:rgba(34,197,94,.10)}
+.sig.red{border-color:var(--r);background:rgba(239,68,68,.10)}
+.sig.yellow{border-color:var(--y);background:rgba(234,179,8,.10)}
+.sig.grey{border-color:var(--gr);background:rgba(107,114,128,.12)}
+.sig .t{font-size:22px;font-weight:800}
+.sig.green .t{color:var(--g)}.sig.red .t{color:var(--r)}.sig.yellow .t{color:var(--y)}.sig.grey .t{color:#b6bdc9}
+ul{margin:6px 0 0;padding-left:18px}li{margin:2px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px;min-width:0}
+.tile .n{font-size:12px;color:var(--mut)}.tile .v{font-size:17px;font-weight:700}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.kv:last-child{border:0}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-top:10px}
+summary{padding:13px 12px;font-weight:700;min-height:48px;cursor:pointer}
+details>.in{padding:0 12px 12px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:4px 5px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--mut);font-weight:600}
+td.k,th.k{text-align:center;font-weight:700;background:var(--card2)}
+tr.atm td{background:rgba(96,165,250,.14)}
+.sc{overflow-x:auto}
+input,select,textarea{width:100%;min-height:44px;background:var(--bg);color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:8px;font:15px inherit;font-family:inherit}
+textarea{min-height:90px;font-size:12px}
+label{display:block;font-size:12px;color:var(--mut);margin:8px 0 3px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.warn{background:rgba(234,179,8,.12);border:1px solid var(--y);border-radius:10px;padding:8px;font-size:13px;margin-top:8px}
+.err{background:rgba(239,68,68,.12);border:1px solid var(--r);border-radius:10px;padding:8px;font-size:13px;margin-top:8px}
+.note{font-size:12px;color:var(--mut);margin-top:6px}
+.news{padding:8px 0;border-bottom:1px dashed var(--line)}.news:last-child{border:0}
+.news a{color:var(--b);text-decoration:none;font-weight:600}
+.tag{font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px;border:1px solid currentColor;margin-right:4px;white-space:nowrap}
+.POSITIVE{color:var(--g)}.NEGATIVE{color:var(--r)}.MIXED{color:var(--y)}.UNCERTAIN{color:var(--mut)}
+svg.sp{width:100%;height:46px;display:block;margin-top:6px}
+.demo{display:none}
+@media(min-width:700px){body{max-width:720px;margin:0 auto}}
+</style>
+</head>
+<body>
+<header>
+  <div class="row">
+    <div class="seg" id="instSeg" role="tablist" aria-label="इंडेक्स चुनें">
+      <button data-inst="NIFTY" role="tab">NIFTY 50</button>
+      <button data-inst="SENSEX" role="tab">SENSEX</button>
+    </div>
+    <button class="btn p" id="btnRefresh" type="button">⟳ रिफ़्रेश</button>
+  </div>
+  <div class="meta" id="metaBar"></div>
+</header>
+
+<main>
+  <div id="noTrade"></div>
+  <section class="card" id="quote" aria-live="polite"></section>
+  <section id="signal"></section>
+  <section class="card" id="fno"></section>
+  <section class="card" id="flow"></section>
+  <section class="card" id="gc"></section>
+  <section class="card" id="glob"></section>
+  <section class="card" id="newsTop"></section>
+
+  <details id="d-signal"><summary>🧭 सिग्नल का पूरा हिसाब (वज़न, योगदान, सीमाएँ)</summary><div class="in" id="signalDetail"></div></details>
+
+  <details id="d-chain"><summary>📊 ऑप्शन चेन (चुने हुए इंडेक्स की)</summary><div class="in">
+    <div id="chainView"></div>
+    <label for="chainText">NSE ऑप्शन-चेन JSON यहाँ पेस्ट करें (या फ़ाइल चुनें)</label>
+    <textarea id="chainText" placeholder='{"records":{"expiryDates":[...],"data":[...]}}'></textarea>
+    <input type="file" id="chainFile" accept=".json,application/json,text/plain" style="margin-top:6px">
+    <div class="f2" style="margin-top:8px">
+      <button class="btn p" id="chainLoad" type="button">चेन लोड करें</button>
+      <button class="btn" id="chainClear" type="button">चेन हटाएँ</button>
+    </div>
+    <div class="note">चेन सिर्फ़ उसी इंडेक्स के लिए जाँची जाएगी जो ऊपर चुना है। भाव मेल न खाए तो रद्द होगी। ऑटो-फ़ेच के लिए सेटिंग में प्रॉक्सी URL डालें (नीचे “सीमाएँ” देखें)।</div>
+    <div id="chainMsg"></div>
+  </div></details>
+
+  <details id="d-setup"><summary>🎯 ट्रेड सेटअप और रिस्क कैलकुलेटर</summary><div class="in">
+    <div id="setupView"></div>
+    <h2 style="margin:14px 0 4px;font-size:14px">रिस्क-प्रति-ट्रेड कैलकुलेटर</h2>
+    <div class="f2">
+      <div><label for="rcCap">कुल पूँजी (₹)</label><input id="rcCap" inputmode="decimal"></div>
+      <div><label for="rcPct">रिस्क % प्रति ट्रेड</label><input id="rcPct" inputmode="decimal"></div>
+      <div><label for="rcEntry">एंट्री प्रीमियम (₹)</label><input id="rcEntry" inputmode="decimal"></div>
+      <div><label for="rcSl">स्टॉप-लॉस प्रीमियम (₹)</label><input id="rcSl" inputmode="decimal"></div>
+    </div>
+    <div id="rcOut" class="note"></div>
+    <div class="warn">नुकसान की भरपाई के लिए साइज़ बढ़ाना सुझाया नहीं जाता। नुकसान के बाद साइज़ घटाएँ या ट्रेड रोक दें। “कोई ट्रेड नहीं” भी एक वैध फ़ैसला है।</div>
+    <div class="err"><b>नेकेड ऑप्शन सेलिंग:</b> नुकसान बहुत बड़ा (कॉल सेलिंग में सैद्धांतिक रूप से असीमित) हो सकता है। मार्जिन ब्रोकर/एक्सचेंज के नियम से तय होता है और बदलता है। गैप-अप/गैप-डाउन में स्टॉप-लॉस नहीं चलता। यह डैशबोर्ड नेकेड सेलिंग नहीं सुझाता; सिर्फ़ डिफ़ाइंड-रिस्क स्प्रेड दिखाता है।</div>
+  </div></details>
+
+  <details id="d-news"><summary>📰 सभी ख़बरें (युद्ध, ट्रेड डील, अर्थव्यवस्था)</summary><div class="in" id="newsAll"></div></details>
+
+  <details id="d-src"><summary>🔧 डेटा स्रोत और डायग्नोस्टिक</summary><div class="in" id="diag"></div></details>
+
+  <details id="d-set"><summary>⚙️ सेटिंग्स और मैन्युअल एंट्री</summary><div class="in">
+    <h2 style="font-size:14px;margin:6px 0 2px">सिग्नल वज़न (कुल अपने-आप सामान्यीकृत)</h2>
+    <div class="f2">
+      <div><label for="wPrice">प्राइस-एक्शन</label><input id="wPrice" inputmode="decimal"></div>
+      <div><label for="wGlobal">ग्लोबल (US/एशिया/GIFT)</label><input id="wGlobal" inputmode="decimal"></div>
+      <div><label for="wMacro">क्रूड + USD/INR</label><input id="wMacro" inputmode="decimal"></div>
+      <div><label for="wOption">ऑप्शन चेन</label><input id="wOption" inputmode="decimal"></div>
+      <div><label for="wFlow">FII/DII (पिछला सत्र)</label><input id="wFlow" inputmode="decimal"></div>
+      <div><label for="stMin">डेटा “स्टेल” सीमा (मिनट)</label><input id="stMin" inputmode="decimal"></div>
+      <div><label for="thBull">GREEN सीमा (स्कोर ≥)</label><input id="thBull" inputmode="decimal"></div>
+      <div><label for="thBear">RED सीमा (स्कोर ≤)</label><input id="thBear" inputmode="decimal"></div>
+    </div>
+    <h2 style="font-size:14px;margin:14px 0 2px">कॉन्ट्रैक्ट और ट्रेड पैरामीटर</h2>
+    <div class="f2">
+      <div><label for="lotN">NIFTY लॉट साइज़ (एक्सचेंज सर्कुलर से खुद भरें)</label><input id="lotN" inputmode="numeric" placeholder="खाली = प्रति-यूनिट"></div>
+      <div><label for="lotS">SENSEX लॉट साइज़ (खुद भरें)</label><input id="lotS" inputmode="numeric" placeholder="खाली = प्रति-यूनिट"></div>
+      <div><label for="slPct">प्रीमियम SL %</label><input id="slPct" inputmode="decimal"></div>
+      <div><label for="rr">टार्गेट रिस्क:रिवॉर्ड (x)</label><input id="rr" inputmode="decimal"></div>
+      <div><label for="width">स्प्रेड चौड़ाई (स्ट्राइक-स्टेप)</label><input id="width" inputmode="numeric"></div>
+      <div><label for="futManual">फ्यूचर्स भाव (मैन्युअल, चुने इंडेक्स का)</label><input id="futManual" inputmode="decimal"></div>
+    </div>
+    <label for="proxy">वैकल्पिक प्रॉक्सी URL (आपका अपना Cloudflare Worker; कोई गुप्त कुंजी नहीं)</label>
+    <input id="proxy" placeholder="https://your-worker.workers.dev" autocapitalize="off" autocomplete="off">
+    <button class="btn" id="saveSet" type="button" style="margin-top:8px;width:100%">सेटिंग्स सेव करें</button>
+
+    <h2 style="font-size:14px;margin:16px 0 2px">FII/DII मैन्युअल एंट्री (NSE रिपोर्ट से, ₹ करोड़)</h2>
+    <div class="f2">
+      <div><label for="fDate">रिपोर्टिंग तारीख</label><input id="fDate" type="date"></div>
+      <div><label for="fPub">प्रकाशन तारीख</label><input id="fPub" type="date"></div>
+      <div><label for="fB">FII ख़रीद</label><input id="fB" inputmode="decimal"></div>
+      <div><label for="fS">FII बिक्री</label><input id="fS" inputmode="decimal"></div>
+      <div><label for="dB">DII ख़रीद</label><input id="dB" inputmode="decimal"></div>
+      <div><label for="dS">DII बिक्री</label><input id="dS" inputmode="decimal"></div>
+      <div><label for="fL">FII इंडेक्स फ्यूचर्स लॉन्ग (कॉन्ट्रैक्ट, वैकल्पिक)</label><input id="fL" inputmode="numeric"></div>
+      <div><label for="fSh">FII इंडेक्स फ्यूचर्स शॉर्ट (वैकल्पिक)</label><input id="fSh" inputmode="numeric"></div>
+    </div>
+    <div class="f2" style="margin-top:8px"><button class="btn p" id="fSave" type="button">FII/DII सेव</button><button class="btn" id="fClear" type="button">हटाएँ</button></div>
+    <div id="fMsg"></div>
+
+    <h2 style="font-size:14px;margin:16px 0 2px">GIFT NIFTY मैन्युअल (सिर्फ़ NIFTY के लिए)</h2>
+    <div class="f2">
+      <div><label for="gV">GIFT NIFTY भाव (आपने जहाँ देखा)</label><input id="gV" inputmode="decimal"></div>
+      <div><label for="gP">पिछला सेटलमेंट/क्लोज़</label><input id="gP" inputmode="decimal"></div>
+    </div>
+    <div class="f2" style="margin-top:8px"><button class="btn p" id="gSave" type="button">GIFT सेव</button><button class="btn" id="gClear" type="button">हटाएँ</button></div>
+    <div id="gMsg"></div>
+    <button class="btn" id="resetAll" type="button" style="margin-top:14px;width:100%">सारा सेव किया डेटा मिटाएँ</button>
+  </div></details>
+
+  <details id="d-info"><summary>ℹ️ सीमाएँ और ज़रूरी चेतावनी</summary><div class="in">
+    <ul>
+      <li>यह निर्णय-सहायक टूल है, निवेश सलाह नहीं। कोई भी सिग्नल सही होने की गारंटी नहीं। मुनाफ़े का वादा नहीं।</li>
+      <li><b>OI अकेले ख़रीदार/बेचने वाले की पहचान नहीं बताता।</b> PCR या OI-कंसन्ट्रेशन अकेले सपोर्ट/रेज़िस्टेंस या दिशा की गारंटी नहीं।</li>
+      <li>सिग्नल “SIGNAL SCORE” है, संभावना (probability) नहीं। इसे ऐतिहासिक आउट-ऑफ़-सैंपल डेटा पर जाँचा नहीं गया है।</li>
+      <li>ख़बरों का असर पहले से भाव में शामिल हो सकता है। ख़बरों की श्रेणी कीवर्ड-अनुमान है, पुष्टि नहीं।</li>
+      <li>यह सिर्फ़ ब्राउज़र पेज है। बंद/बैकग्राउंड में होने पर रिफ़्रेश या नोटिफ़िकेशन नहीं भेजता।</li>
+      <li><b>सीधे ब्राउज़र में:</b> Yahoo Finance से इंडेक्स/क्रूड/USD-INR/गोल्ड (अगर Yahoo आपके ब्राउज़र को CORS-अनुमति दे), RSS न्यूज़ (rss2json के ज़रिए), सिग्नल इंजन, कैलकुलेटर।</li>
+      <li><b>प्रॉक्सी/मैन्युअल चाहिए:</b> NSE ऑप्शन चेन, FII/DII, GIFT NIFTY। NSE सीधे ब्राउज़र को नहीं देता। प्रॉक्सी पर भी NSE क्लाउड IP ब्लॉक कर सकता है; तब पैनल DATA UNAVAILABLE रहेगा।</li>
+      <li>SENSEX की BSE चेन के लिए ऑटो-फ़ेच नहीं है; NSE-फ़ॉर्मेट (records.data) में बदली हुई JSON पेस्ट की जा सकती है।</li>
+    </ul>
+  </div></details>
+</main>
+
+<script>
+'use strict';
+/* ===== उपयोगी ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp=(x,a=-1,b=1)=>Math.max(a,Math.min(b,x));
+const fin=x=>typeof x==='number'&&Number.isFinite(x);
+const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+const fmtN=(x,d=2)=>fin(x)?x.toLocaleString('en-IN',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
+const fmtI=x=>fin(x)?Math.round(x).toLocaleString('en-IN'):'—';
+const sgn=x=>x>0?'+':'';
+const MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+const ISTF=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+const fmtT=ms=>fin(ms)?ISTF.format(new Date(ms))+' IST':'—';
+const ISTP=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Kolkata',weekday:'short',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',hour12:false});
+function istParts(ms){const o={};ISTP.formatToParts(new Date(ms)).forEach(p=>o[p.type]=p.value);return{wd:o.weekday,y:+o.year,m:+o.month,d:+o.day,h:(+o.hour)%24,mi:+o.minute}}
+function ageStr(ms,now=Date.now()){if(!fin(ms))return'—';let s=Math.max(0,Math.round((now-ms)/1000));if(s<90)return s+' सेकंड';const m=Math.round(s/60);if(m<90)return m+' मिनट';const h=Math.round(m/60);if(h<48)return h+' घंटे';return Math.round(h/24)+' दिन'}
+function indianClockOpen(ms){const p=istParts(ms);if(p.wd==='Sat'||p.wd==='Sun')return false;const m=p.h*60+p.mi;return m>=555&&m<=930}
+function parseNseTs(s){const m=/^(\d{1,2})-([A-Za-z]{3})-(\d{4})[ T](\d{1,2}):(\d{2}):?(\d{2})?/.exec(String(s||''));if(!m)return NaN;const mo=MON[m[2].toLowerCase()];if(mo===undefined)return NaN;return Date.UTC(+m[3],mo,+m[1],+m[4],+m[5],+(m[6]||0))-19800000}
+function parseNseDate(s){const m=/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/.exec(String(s||'').trim());if(!m)return NaN;const mo=MON[m[2].toLowerCase()];if(mo===undefined)return NaN;const d=new Date(Date.UTC(+m[3],mo,+m[1]));if(d.getUTCMonth()!==mo||d.getUTCDate()!==+m[1])return NaN;return d.getTime()}
+function todayIST(ms=Date.now()){const p=istParts(ms);return Date.UTC(p.y,p.m-1,p.d)}
+const numOrNull=x=>{if(x===null||x===undefined||x===''||x==='-')return null;const n=typeof x==='number'?x:parseFloat(String(x).replace(/,/g,''));return Number.isFinite(n)?n:null};
+function safeLink(u){try{const x=new URL(u);return(x.protocol==='https:'||x.protocol==='http:')?x.href:null}catch(e){return null}}
+
+/* ===== सेटिंग्स / स्टोरेज ===== */
+const KEY='fo_dash_v1';
+const DEF={weights:{price:35,global:20,macro:10,option:20,flow:10},thBull:25,thBear:-25,conflict:-0.4,lot:{NIFTY:'',SENSEX:''},proxy:'',cap:200000,riskPct:1,slPct:30,rr:1.5,width:2,staleMin:30,newsMaxH:72,fut:{NIFTY:'',SENSEX:''}};
+const clone=o=>JSON.parse(JSON.stringify(o));
+function deepMerge(d,v){if(typeof d!=='object'||d===null||Array.isArray(d)||typeof v!=='object'||v===null)return v===undefined?d:v;const o={};for(const k of Object.keys(d))o[k]=deepMerge(d[k],v[k]);return o}
+function lsGet(k,d){try{const v=localStorage.getItem(KEY+':'+k);return v?JSON.parse(v):d}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(KEY+':'+k,JSON.stringify(v));return true}catch(e){return false}}
+function lsDel(k){try{localStorage.removeItem(KEY+':'+k)}catch(e){}}
+let SET=deepMerge(clone(DEF),lsGet('set',null)||{});
+
+/* ===== इंस्ट्रूमेंट और स्रोत ===== */
+const INST={NIFTY:{y:'^NSEI',name:'NIFTY 50',ex:'NSE'},SENSEX:{y:'^BSESN',name:'BSE SENSEX',ex:'BSE'}};
+const SYM={
+ NIFTY:{y:'^NSEI',name:'NIFTY 50 (कैश इंडेक्स)',in:true,cur:'INR'},
+ SENSEX:{y:'^BSESN',name:'BSE SENSEX (कैश इंडेक्स)',in:true,cur:'INR'},
+ VIX:{y:'^INDIAVIX',name:'India VIX',in:true,cur:null},
+ BRENT:{y:'BZ=F',name:'Brent क्रूड फ्यूचर्स (Yahoo BZ=F, नज़दीकी कॉन्ट्रैक्ट)',cur:'USD'},
+ DJI:{y:'^DJI',name:'Dow Jones (कैश इंडेक्स)',cur:'USD'},
+ IXIC:{y:'^IXIC',name:'Nasdaq Composite (कैश इंडेक्स)',cur:'USD'},
+ GSPC:{y:'^GSPC',name:'S&P 500 (कैश इंडेक्स)',cur:'USD'},
+ N225:{y:'^N225',name:'Nikkei 225',cur:'JPY'},
+ HSI:{y:'^HSI',name:'Hang Seng',cur:'HKD'},
+ KS11:{y:'^KS11',name:'KOSPI',cur:'KRW'},
+ SSE:{y:'000001.SS',name:'Shanghai Composite',cur:'CNY'},
+ USDINR:{y:'USDINR=X',name:'USD/INR (FX स्पॉट)',cur:'INR'},
+ GOLD:{y:'GC=F',name:'गोल्ड फ्यूचर्स (Yahoo GC=F, COMEX)',cur:'USD'}
+};
+const ST={ALL:['NIFTY','SENSEX','VIX','BRENT','DJI','IXIC','GSPC','N225','HSI','KS11','SSE','USDINR','GOLD']};
+
+/* ===== राज्य ===== */
+const S={inst:lsGet('inst','NIFTY'),Q:{},qErr:{},chains:lsGet('chains',{NIFTY:null,SENSEX:null}),fii:lsGet('fii',null),gift:lsGet('gift',null),
+ news:[],newsErr:{},diag:{},lastTry:null,lastOk:null,newsTry:0,newsOk:null,fiiTry:0,chTry:0,busy:false,lastManual:0,nowOverride:null};
+if(!INST[S.inst])S.inst='NIFTY';
+const NOW=()=>S.nowOverride||Date.now();
+
+/* ===== नेटवर्क ===== */
+function diagRec(id,name){return S.diag[id]||(S.diag[id]={id,name,tries:0,fails:0,lastTry:null,lastOk:null,err:null,until:0})}
+async function fetchTimeout(url,ms=12000,opts){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);try{return await fetch(url,Object.assign({signal:c.signal,cache:'no-store'},opts||{}))}finally{clearTimeout(t)}}
+function proxyUrl(u){return SET.proxy.replace(/\/+$/,'')+'/?url='+encodeURIComponent(u)}
+async function getText(url){const r=await fetchTimeout(url);if(r.status===429)throw new Error('रेट-लिमिट (HTTP 429)');if(!r.ok)throw new Error('HTTP '+r.status);return r.text()}
+async function getJSON(url){const t=await getText(url);try{return JSON.parse(t)}catch(e){throw new Error('अमान्य JSON')}}
+function errMsg(e){if(!e)return'अज्ञात त्रुटि';if(e.name==='AbortError')return'टाइमआउट';if(/Failed to fetch|NetworkError|Load failed/i.test(e.message))return'नेटवर्क/CORS ब्लॉक (ब्राउज़र ने जवाब नहीं दिया)';return e.message||String(e)}
+
+/* ===== Yahoo चार्ट पार्सर और वैलिडेशन ===== */
+function parseChart(j,sym){
+  const r=j&&j.chart&&j.chart.result&&j.chart.result[0];
+  if(!r){const d=j&&j.chart&&j.chart.error&&j.chart.error.description;throw new Error(d?('स्रोत त्रुटि: '+d):'खाली/अमान्य जवाब')}
+  const m=r.meta||{};
+  if(m.symbol&&String(m.symbol).toUpperCase()!==String(sym).toUpperCase())throw new Error('सिंबल मेल नहीं खाता ('+m.symbol+' ≠ '+sym+')');
+  const ts=Array.isArray(r.timestamp)?r.timestamp:[];
+  const q=(r.indicators&&r.indicators.quote&&r.indicators.quote[0])||{};
+  const bars=[],seen=new Set();let bad=0,dup=0;
+  for(let i=0;i<ts.length;i++){
+    const t=ts[i],c=q.close&&q.close[i];
+    if(!fin(t)||!fin(c)||c<=0){bad++;continue}
+    if(seen.has(t)){dup++;continue}
+    seen.add(t);
+    const h=q.high&&q.high[i],l=q.low&&q.low[i];
+    bars.push({t:t*1000,c,h:fin(h)&&h>0?h:c,l:fin(l)&&l>0?l:c});
+  }
+  bars.sort((a,b)=>a.t-b.t);
+  const price=fin(m.regularMarketPrice)&&m.regularMarketPrice>0?m.regularMarketPrice:(bars.length?bars[bars.length-1].c:NaN);
+  const t=fin(m.regularMarketTime)?m.regularMarketTime*1000:(bars.length?bars[bars.length-1].t:NaN);
+  const prev=[m.chartPreviousClose,m.previousClose].find(x=>fin(x)&&x>0);
+  if(!fin(price))throw new Error('भाव अनुपलब्ध');
+  if(!fin(t))throw new Error('समय-मुहर अनुपलब्ध');
+  const warn=[];
+  if(bad)warn.push(bad+' अमान्य/ख़ाली कैंडल हटाई');
+  if(dup)warn.push(dup+' डुप्लिकेट कैंडल हटाई');
+  for(let i=1;i<bars.length;i++){if(Math.abs(bars[i].c/bars[i-1].c-1)>0.03){warn.push('अचानक उछाल >3% ('+fmtT(bars[i].t)+')');break}}
+  if(!fin(prev))warn.push('पिछला क्लोज़ अनुपलब्ध');
+  const hi=bars.length?Math.max(...bars.map(b=>b.h)):NaN,lo=bars.length?Math.min(...bars.map(b=>b.l)):NaN;
+  const per=m.currentTradingPeriod&&m.currentTradingPeriod.regular;
+  return{ok:true,sym,price,prev:fin(prev)?prev:NaN,t,bars,dayHigh:fin(m.regularMarketDayHigh)?m.regularMarketDayHigh:hi,dayLow:fin(m.regularMarketDayLow)?m.regularMarketDayLow:lo,
+    cur:m.currency||null,period:per&&fin(per.start)&&fin(per.end)?{start:per.start*1000,end:per.end*1000}:null,warn,exch:m.fullExchangeName||m.exchangeName||''};
+}
+const pctOf=q=>q&&q.ok&&fin(q.price)&&fin(q.prev)&&q.prev>0?(q.price/q.prev-1)*100:NaN;
+const chgOf=q=>q&&q.ok&&fin(q.price)&&fin(q.prev)?q.price-q.prev:NaN;
+
+/* ===== सेशन/ताज़गी स्टेटस ===== */
+function statusOf(key,now=NOW()){
+  const q=S.Q[key],def=SYM[key];
+  if(!q||!q.ok)return{s:'DATA UNAVAILABLE',open:null,stale:true,cls:'b-na',why:S.qErr[key]||'अभी तक डेटा नहीं मिला'};
+  const age=now-q.t,staleMs=SET.staleMin*60000;
+  let open;
+  if(def.in)open=indianClockOpen(now);
+  else if(q.period)open=now>=q.period.start&&now<=q.period.end;
+  else open=age<600000;
+  if(open){
+    if(age<=120000)return{s:'LIVE',open,stale:false,cls:'b-live',age,why:'सर्वर समय-मुहर के अनुसार '+ageStr(q.t,now)+' पुराना'};
+    if(age<=staleMs)return{s:'DELAYED',open,stale:false,cls:'b-del',age,why:'डेटा '+ageStr(q.t,now)+' पुराना (स्रोत की देरी)'};
+    return{s:'LAST AVAILABLE',open,stale:true,cls:'b-last',age,why:'सेशन खुला होना चाहिए पर डेटा '+ageStr(q.t,now)+' पुराना: स्टेल, फ़ीड रुकी या छुट्टी हो सकती है'};
+  }
+  return{s:'MARKET CLOSED',open:false,stale:age>7*86400000,cls:'b-closed',age,why:'बाज़ार बंद। आख़िरी भाव '+fmtT(q.t)};
+}
+
+/* ===== ऑप्शन चेन ===== */
+function parseChain(raw){
+  const o=typeof raw==='string'?JSON.parse(raw):raw;
+  const rec=(o&&o.records)||o;
+  const data=rec&&rec.data;
+  if(!Array.isArray(data)||!data.length)throw new Error('records.data नहीं मिला: यह NSE-फ़ॉर्मेट चेन नहीं लगती');
+  const mk=s=>{if(!s||typeof s!=='object')return null;const oi=numOrNull(s.openInterest);if(oi===null||oi<0)return null;
+    return{oi,coi:numOrNull(s.changeinOpenInterest),vol:numOrNull(s.totalTradedVolume),iv:numOrNull(s.impliedVolatility),ltp:numOrNull(s.lastPrice),chg:numOrNull(s.change),bid:numOrNull(s.bidprice),ask:numOrNull(s.askPrice),und:numOrNull(s.underlyingValue)}};
+  const by={};let dup=0,bad=0,undSeen=null;
+  for(const r of data){
+    const K=numOrNull(r&&r.strikePrice),ex=r&&(r.expiryDate||r.expiry);
+    if(K===null||K<=0||!ex||isNaN(parseNseDate(ex))){bad++;continue}
+    const m=by[ex]||(by[ex]=new Map());
+    if(m.has(K)){dup++;continue}
+    const row={K,ce:mk(r.CE),pe:mk(r.PE)};
+    for(const sd of [row.ce,row.pe])if(sd&&sd.und!==null&&undSeen===null)undSeen=sd.und;
+    m.set(K,row);
+  }
+  const expiries=Object.keys(by).sort((a,b)=>parseNseDate(a)-parseNseDate(b));
+  if(!expiries.length)throw new Error('कोई वैध एक्सपायरी/स्ट्राइक नहीं');
+  const rows={};expiries.forEach(e=>rows[e]=[...by[e].values()].sort((a,b)=>a.K-b.K));
+  const und=numOrNull(rec.underlyingValue)!==null?numOrNull(rec.underlyingValue):undSeen;
+  const ts=rec.timestamp?parseNseTs(rec.timestamp):NaN;
+  return{expiries,rows,und,ts:fin(ts)?ts:null,dup,bad};
+}
+function pickExpiry(parsed,now=NOW()){const t=todayIST(now);return parsed.expiries.find(e=>parseNseDate(e)>=t)||null}
+function chainMatches(parsed,inst,now=NOW()){
+  const other=inst==='NIFTY'?'SENSEX':'NIFTY';
+  const own=S.Q[inst],oth=S.Q[other];
+  if(!fin(parsed.und))return{ok:true,warn:'चेन में अंडरलाइंग भाव नहीं मिला, मिलान सत्यापित नहीं हो सका'};
+  if(own&&own.ok&&fin(own.price)){
+    const d=Math.abs(parsed.und/own.price-1);
+    if(d>0.05)return{ok:false,msg:'अंडरलाइंग '+fmtN(parsed.und)+' है, जबकि '+INST[inst].name+' का भाव '+fmtN(own.price)+' (अंतर '+(d*100).toFixed(1)+'%)। चेन इस इंडेक्स की नहीं लगती, रद्द।'};
+    return{ok:true};
+  }
+  if(oth&&oth.ok&&fin(oth.price)&&Math.abs(parsed.und/oth.price-1)<0.05)return{ok:false,msg:'यह चेन '+INST[other].name+' जैसी दिखती है (भाव '+fmtN(oth.price)+' के पास), रद्द।'};
+  return{ok:true,warn:inst+' का लाइव भाव उपलब्ध नहीं, इसलिए चेन का मिलान सत्यापित नहीं हो सका'};
+}
+function classifyBuildup(pchg,coi){
+  if(!fin(pchg)||!fin(coi)||pchg===0||coi===0)return null;
+  if(pchg>0&&coi>0)return'Long Build-up';
+  if(pchg<0&&coi>0)return'Short Build-up';
+  if(pchg>0&&coi<0)return'Short Covering';
+  return'Long Unwinding';
+}
+function calcChain(rows,spot){
+  if(!rows||!rows.length||!fin(spot))return null;
+  let atm=rows[0];for(const r of rows)if(Math.abs(r.K-spot)<Math.abs(atm.K-spot))atm=r;
+  let step=Infinity;for(let i=1;i<rows.length;i++){const d=rows[i].K-rows[i-1].K;if(d>0&&d<step)step=d}
+  if(!fin(step))step=NaN;
+  const sum=(side,f)=>rows.reduce((a,r)=>a+(r[side]&&fin(r[side][f])?r[side][f]:0),0);
+  const ceOI=sum('ce','oi'),peOI=sum('pe','oi'),ceV=sum('ce','vol'),peV=sum('pe','vol'),ceC=sum('ce','coi'),peC=sum('pe','coi');
+  const pcr=ceOI>0?peOI/ceOI:NaN,pcrV=ceV>0?peV/ceV:NaN;
+  const top=(side,pred)=>rows.filter(r=>r[side]&&pred(r.K)&&r[side].oi>0).sort((a,b)=>b[side].oi-a[side].oi).slice(0,2).map(r=>({K:r.K,oi:r[side].oi}));
+  const sup=top('pe',k=>k<=atm.K),res=top('ce',k=>k>=atm.K);
+  let mp=null,best=Infinity;
+  for(const c of rows){let t=0;for(const r of rows){if(r.ce)t+=r.ce.oi*Math.max(c.K-r.K,0);if(r.pe)t+=r.pe.oi*Math.max(r.K-c.K,0)}if(t<best){best=t;mp=c.K}}
+  const ivs=[atm.ce&&atm.ce.iv,atm.pe&&atm.pe.iv].filter(x=>fin(x)&&x>0);
+  const incomplete=rows.filter(r=>!r.ce||!r.pe).length;
+  const maxCE=rows.reduce((a,r)=>r.ce&&(!a||r.ce.oi>a.ce.oi)?r:a,null),maxPE=rows.reduce((a,r)=>r.pe&&(!a||r.pe.oi>a.pe.oi)?r:a,null);
+  return{atm,step,ceOI,peOI,ceV,peV,ceC,peC,pcr,pcrV,sup,res,maxPain:mp,atmIV:ivs.length?avg(ivs):NaN,incomplete,n:rows.length,maxCE:maxCE&&maxCE.K,maxPE:maxPE&&maxPE.K};
+}
+/* सक्रिय चेन: (1) सेव्ड चेन → (2) सत्यापन → (3) गणना */
+function activeChain(inst,now=NOW()){
+  const st=S.chains[inst];if(!st)return null;
+  const ex=st.expiry&&st.parsed.rows[st.expiry]?st.expiry:pickExpiry(st.parsed,now);
+  if(!ex)return{st,err:'सभी एक्सपायरी बीत चुकी हैं: चेन बेकार, नई लोड करें'};
+  if(parseNseDate(ex)<todayIST(now))return{st,err:'चुनी एक्सपायरी ('+ex+') बीत चुकी है'};
+  const q=S.Q[inst],spot=q&&q.ok?q.price:st.parsed.und;
+  const calc=calcChain(st.parsed.rows[ex],spot);
+  const t=st.parsed.ts||st.loadedAt,age=now-t;
+  const open=indianClockOpen(now);
+  const fresh=open?age<=SET.staleMin*60000:true;
+  const mm=chainMatches(st.parsed,inst,now);
+  const dte=Math.round((parseNseDate(ex)-todayIST(now))/86400000);
+  return{st,ex,calc,spot,t,age,fresh,usable:!!calc&&fresh&&mm.ok&&open,mm,dte,err:mm.ok?null:mm.msg};
+}
+
+/* ===== FII/DII ===== */
+function parseFiiDii(arr){
+  if(!Array.isArray(arr))throw new Error('अपेक्षित सूची नहीं मिली');
+  const out={};const num=numOrNull;
+  for(const r of arr){
+    const cat=String(r&&r.category||'').toUpperCase();
+    const k=cat.includes('FII')||cat.includes('FPI')?'fii':(cat.includes('DII')?'dii':null);
+    if(!k)continue;
+    const b=num(r.buyValue),s=num(r.sellValue),n=num(r.netValue);
+    if(b===null||s===null)continue;
+    const warn=n!==null&&Math.abs((b-s)-n)>Math.max(2,0.005*Math.abs(b-s))?'नेट ≠ ख़रीद−बिक्री':null;
+    out[k]={buy:b,sell:s,net:b-s,rep:r.date||null,warn};
+  }
+  if(!out.fii&&!out.dii)throw new Error('FII/DII पंक्तियाँ नहीं मिलीं');
+  return out;
+}
+
+/* ===== सिग्नल इंजन ===== */
+function groupPrice(q){
+  if(!q||!q.ok||!fin(q.price)||!fin(q.prev))return null;
+  const chg=(q.price/q.prev-1)*100;const parts=[[clamp(chg/0.8),0.4]];const notes=['दिन का बदलाव '+sgn(chg)+chg.toFixed(2)+'%'];
+  if(fin(q.dayHigh)&&fin(q.dayLow)&&q.dayHigh>q.dayLow){const pos=(q.price-q.dayLow)/(q.dayHigh-q.dayLow);parts.push([(pos-0.5)*2,0.3]);notes.push('दिन की रेंज में '+(pos*100).toFixed(0)+'% ऊपर')}
+  const b=q.bars;if(b.length>=7){const sl=(b[b.length-1].c/b[b.length-7].c-1)*100;parts.push([clamp(sl/0.3),0.3]);notes.push('पिछले 30 मिनट '+sgn(sl)+sl.toFixed(2)+'%')}
+  const w=parts.reduce((x,p)=>x+p[1],0);
+  return{s:parts.reduce((x,p)=>x+p[0]*p[1],0)/w,note:notes.join(' · ')};
+}
+function freshQ(k,now){const q=S.Q[k];return q&&q.ok&&now-q.t<4*86400000?q:null}
+function groupGlobal(inst,now){
+  const parts=[],notes=[];
+  const us=['DJI','IXIC','GSPC'].map(k=>freshQ(k,now)?pctOf(S.Q[k]):NaN).filter(fin);
+  if(us.length){const a=avg(us);parts.push([clamp(a/1.0),0.4]);notes.push('US औसत '+sgn(a)+a.toFixed(2)+'%')}
+  const as=['N225','HSI','KS11','SSE'].map(k=>freshQ(k,now)?pctOf(S.Q[k]):NaN).filter(fin);
+  if(as.length){const a=avg(as);parts.push([clamp(a/1.0),0.25]);notes.push('एशिया औसत '+sgn(a)+a.toFixed(2)+'%')}
+  const g=S.gift;
+  if(inst==='NIFTY'&&g&&fin(g.val)&&fin(g.prev)&&g.prev>0&&now-g.savedAt<=3600000){const p=(g.val/g.prev-1)*100;parts.push([clamp(p/0.7),0.35]);notes.push('GIFT (मैन्युअल) '+sgn(p)+p.toFixed(2)+'%')}
+  if(!parts.length)return null;
+  const w=parts.reduce((x,p)=>x+p[1],0);
+  return{s:parts.reduce((x,p)=>x+p[0]*p[1],0)/w,note:notes.join(' · ')};
+}
+function groupMacro(now){
+  const parts=[],notes=[];
+  const c=freshQ('BRENT',now)?pctOf(S.Q.BRENT):NaN;if(fin(c)){parts.push(clamp(-c/2));notes.push('ब्रेंट '+sgn(c)+c.toFixed(2)+'% (महँगा तेल = नकारात्मक)')}
+  const f=freshQ('USDINR',now)?pctOf(S.Q.USDINR):NaN;if(fin(f)){parts.push(clamp(-f/0.5));notes.push('USD/INR '+sgn(f)+f.toFixed(2)+'% (रुपया कमज़ोर = नकारात्मक)')}
+  if(!parts.length)return null;return{s:avg(parts),note:notes.join(' · ')};
+}
+function groupOption(ac){
+  if(!ac||!ac.usable||!ac.calc)return null;const c=ac.calc;const parts=[],notes=[];
+  if(fin(c.pcr)){parts.push([clamp((c.pcr-1)/0.4),0.6]);notes.push('PCR(OI) '+c.pcr.toFixed(2))}
+  const d=Math.abs(c.peC)+Math.abs(c.ceC);if(d>0){parts.push([clamp((c.peC-c.ceC)/d),0.4]);notes.push('ΔOI: PE '+fmtI(c.peC)+' / CE '+fmtI(c.ceC))}
+  if(!parts.length)return null;const w=parts.reduce((x,p)=>x+p[1],0);
+  return{s:parts.reduce((x,p)=>x+p[0]*p[1],0)/w,note:notes.join(' · ')};
+}
+function groupFlow(now){
+  const f=S.fii;if(!f||!f.fii)return null;
+  const repOk=fin(f.repMs)&&now-f.repMs<=5*86400000;if(!repOk)return null;
+  let s=0.7*clamp(f.fii.net/3000);if(f.dii)s+=0.3*clamp(f.dii.net/3000);
+  return{s,note:'FII नेट '+fmtI(f.fii.net)+' ₹Cr'+(f.dii?' · DII नेट '+fmtI(f.dii.net)+' ₹Cr':'')+' (पिछला सत्र, '+(f.repText||'')+')'};
+}
+function computeSignal(inst,now=NOW()){
+  const W=SET.weights;const st=statusOf(inst,now);const q=S.Q[inst];const ac=activeChain(inst,now);
+  const G=[
+    {id:'price',name:'प्राइस-एक्शन ('+INST[inst].name+')',w:W.price,r:groupPrice(q),lim:'तीनों उप-संकेत एक ही भाव से निकले, इसलिए एक समूह माना; जोड़ा नहीं, औसत लिया।'},
+    {id:'global',name:'ग्लोबल बाज़ार',w:W.global,r:groupGlobal(inst,now),lim:'US का आख़िरी सत्र बदलाव; गैप की गारंटी नहीं। GIFT सिर्फ़ मैन्युअल और सिर्फ़ NIFTY के लिए।'},
+    {id:'macro',name:'क्रूड + USD/INR',w:W.macro,r:groupMacro(now),lim:'क्रूड और रुपया आपस में जुड़े हैं, इसलिए एक समूह।'},
+    {id:'option',name:'ऑप्शन चेन (PCR + ΔOI)',w:W.option,r:groupOption(ac),lim:'चेन ताज़ा, मेल खाती और बाज़ार खुला हो तभी। OI से ख़रीदार/बेचने वाला पता नहीं चलता।'},
+    {id:'flow',name:'FII/DII कैश (पिछला सत्र)',w:W.flow,r:groupFlow(now),lim:'यह EOD/पिछले सत्र का डेटा है, इंट्राडे नहीं।'}
+  ];
+  const vq=freshQ('VIX',now),vp=vq?pctOf(vq):NaN;let damp=1,dampNote='';
+  if(fin(vp)&&vp>10){damp=0.5;dampNote='India VIX '+vp.toFixed(1)+'% चढ़ा: स्कोर 50% घटाया (अनिश्चितता)'}else if(fin(vp)&&vp>5){damp=0.75;dampNote='India VIX '+vp.toFixed(1)+'% चढ़ा: स्कोर 25% घटाया'}
+  const av=G.filter(g=>g.r&&g.w>0);
+  const base={groups:G,vix:{pct:vp,damp,note:dampNote},status:st,levels:null,limits:[]};
+  base.limits.push('SIGNAL SCORE है, सफलता की संभावना नहीं। ऐतिहासिक आउट-ऑफ़-सैंपल जाँच नहीं हुई।');
+  base.limits.push('ख़बरें स्कोर में शामिल नहीं (स्वचालित सत्यापन संभव नहीं); उन्हें अलग से देखें।');
+  // स्तर
+  if(q&&q.ok&&q.bars.length>=3){const b=q.bars.slice(-12);base.levels={trig:Math.max(...b.map(x=>x.h)),inval:Math.min(...b.map(x=>x.l)),n:b.length}}
+  if(!q||!q.ok||st.s==='DATA UNAVAILABLE')return Object.assign(base,{color:'grey',label:'DATA UNAVAILABLE',hi:'भाव नहीं मिला',score:null,reasons:[st.why],conf:[],sup:[],gate:'price'});
+  if(st.s==='MARKET CLOSED'||st.stale||st.s==='LAST AVAILABLE'){
+    const gp=G[0].r?G[0].r.s:null;
+    return Object.assign(base,{color:'grey',label:st.s==='MARKET CLOSED'?'MARKET CLOSED':'STALE / LAST AVAILABLE',hi:st.s==='MARKET CLOSED'?'बाज़ार बंद: अभी दिशा-सिग्नल बंद':'डेटा पुराना: दिशा-सिग्नल बंद',score:null,reasons:[st.why],sup:[],conf:[],gate:'status',info:gp===null?null:'आख़िरी सत्र का झुकाव (सिर्फ़ सूचना, सिग्नल नहीं): प्राइस समूह '+sgn(gp)+(gp*100).toFixed(0)+'/100'});
+  }
+  if(!G[0].r)return Object.assign(base,{color:'grey',label:'DATA UNAVAILABLE',hi:'पिछला क्लोज़ नहीं मिला',score:null,reasons:['प्राइस समूह की गणना के लिए पिछला क्लोज़ चाहिए'],sup:[],conf:[],gate:'prev'});
+  const wsum=av.reduce((a,g)=>a+g.w,0);
+  let score=wsum>0?av.reduce((a,g)=>a+g.w*g.r.s,0)/wsum*100:0;
+  score*=damp;
+  const others=av.filter(g=>g.id!=='price');
+  const dir=score>=SET.thBull?1:(score<=SET.thBear?-1:0);
+  const sup=[],conf=[];
+  av.forEach(g=>{const line=g.name+': '+sgn(g.r.s)+(g.r.s*100).toFixed(0)+' · '+g.r.note;if(dir===0){}else if(g.r.s*dir>0.15)sup.push(line);else if(g.r.s*dir<-0.15)conf.push(line)});
+  let color='yellow',label='WAIT / MIXED SIGNALS',hi='इंतज़ार: संकेत मिले-जुले या पुष्टि कम',reasons=[];
+  if(others.length<2){reasons.push('पुष्टि के लिए कम से कम 2 स्वतंत्र समूह चाहिए, अभी '+others.length+' उपलब्ध');}
+  else if(dir!==0){
+    const strongOpp=av.filter(g=>g.r.s*dir<=SET.conflict);
+    if(strongOpp.length){reasons.push('टकराव: '+strongOpp.map(g=>g.name).join(', ')+' उलटी दिशा में ठोस संकेत दे रहे हैं');}
+    else if(sup.length<2){reasons.push('दिशा के पक्ष में 2 से कम समूह सहमत')}
+    else{color=dir>0?'green':'red';label=dir>0?'BULLISH BIAS':'BEARISH BIAS';hi=dir>0?'तेज़ी का झुकाव (संभावित CALL सेटअप, शर्तों के साथ)':'मंदी का झुकाव (संभावित PUT सेटअप, शर्तों के साथ)'}
+  }else reasons.push('कुल स्कोर '+score.toFixed(0)+' दोनों सीमाओं ('+SET.thBear+' / +'+SET.thBull+') के बीच है');
+  if(dampNote)reasons.push(dampNote);
+  const L=base.levels;
+  const confirm=[],invalid=[];
+  if(color==='green'){if(L){confirm.push('पिछले '+L.n+' कैंडल (5-मिनट) का हाई '+fmtN(L.trig)+' ऊपर क्लोज़');invalid.push('भाव '+fmtN(L.inval)+' (पिछले '+L.n+' कैंडल का लो) के नीचे क्लोज़')}
+    if(ac&&ac.calc&&ac.calc.sup[0])invalid.push('चेन-सपोर्ट '+fmtN(ac.calc.sup[0].K,0)+' टूटे')}
+  else if(color==='red'){if(L){confirm.push('पिछले '+L.n+' कैंडल (5-मिनट) का लो '+fmtN(L.inval)+' के नीचे क्लोज़');invalid.push('भाव '+fmtN(L.trig)+' (पिछले '+L.n+' कैंडल का हाई) के ऊपर क्लोज़')}
+    if(ac&&ac.calc&&ac.calc.res[0])invalid.push('चेन-रेज़िस्टेंस '+fmtN(ac.calc.res[0].K,0)+' के ऊपर टिके')}
+  else{confirm.push('कम से कम 2 स्वतंत्र समूह एक ही दिशा में और कोई ठोस विरोधी संकेत नहीं')}
+  return Object.assign(base,{color,label,hi,score,reasons,sup,conf,confirm,invalid,gate:null});
+}
+
+/* ===== पेऑफ़ / रिस्क ===== */
+function pnl(legs,S_){return legs.reduce((a,l)=>{const iv=l.t==='C'?Math.max(S_-l.K,0):Math.max(l.K-S_,0);return a+l.side*(iv-l.prem)*(l.q||1)},0)}
+function legsStats(legs){
+  const Ks=[...new Set(legs.map(l=>l.K))].sort((a,b)=>a-b);
+  const far=Math.max(...Ks)*3+1;
+  const pts=[0,...Ks,far];
+  const vals=pts.map(p=>pnl(legs,p));
+  const slopeFar=legs.reduce((a,l)=>a+(l.t==='C'?l.side*(l.q||1):0),0);
+  const unlimitedProfit=slopeFar>0,unlimitedLoss=slopeFar<0;
+  const maxP=unlimitedProfit?Infinity:Math.max(...vals),maxL=unlimitedLoss?-Infinity:Math.min(...vals);
+  const be=[];
+  for(let i=1;i<pts.length;i++){const a=vals[i-1],b=vals[i];if(a===0&&i===1)be.push(pts[0]);if((a<0&&b>0)||(a>0&&b<0)){be.push(pts[i-1]+(0-a)*(pts[i]-pts[i-1])/(b-a))}else if(b===0&&i>1)be.push(pts[i])}
+  const last=vals[vals.length-1];
+  if(slopeFar!==0){const x=far+(0-last)/slopeFar;if(x>far&&((last<0&&slopeFar>0)||(last>0&&slopeFar<0)))be.push(x)}
+  return{maxProfit:maxP,maxLoss:maxL,be:[...new Set(be.map(x=>+x.toFixed(2)))],unlimitedLoss,unlimitedProfit};
+}
+function riskLots(cap,pct,entry,sl,lot){
+  if(![cap,pct,entry,sl].every(fin)||cap<=0||pct<=0||entry<=0||sl<0||sl>=entry)return{err:'सही मान भरें (एंट्री > SL ≥ 0, पूँजी और % > 0)'};
+  const risk=cap*pct/100,perUnit=entry-sl;
+  if(!fin(lot)||lot<=0)return{risk,perUnit,units:Math.floor(risk/perUnit),lots:null,note:'लॉट साइज़ सेटिंग में भरें; अभी प्रति-यूनिट हिसाब'};
+  const perLot=perUnit*lot,lots=Math.floor(risk/perLot);
+  return{risk,perUnit,perLot,lots,realRisk:lots*perLot};
+}
+
+/* ===== सेटअप ===== */
+function buildSetups(sig,inst,ac){
+  if(sig.color!=='green'&&sig.color!=='red')return[{title:'NO TRADE / कोई ट्रेड नहीं',tone:'grey',lines:['अभी सिग्नल '+(sig.color==='yellow'?'मिला-जुला (WAIT)':'अनुपलब्ध (GREY)')+' है। सबसे सुरक्षित विकल्प: इंतज़ार, पूँजी बचाना।']}];
+  const bull=sig.color==='green',out=[];
+  const lotN=numOrNull(SET.lot[inst]);const lotTxt=v=>lotN?(' | प्रति लॉट '+fmtN(v*lotN,0)):'';
+  if(!ac||!ac.calc||ac.err){out.push({title:(bull?'CALL':'PUT')+' सेटअप: चेन के बिना सिर्फ़ ढाँचा',tone:bull?'green':'red',lines:['वैध/ताज़ा ऑप्शन चेन उपलब्ध नहीं, इसलिए स्ट्राइक/प्रीमियम की गणना नहीं की गई'+(ac&&ac.err?(' ('+ac.err+')'):'')+'।','दिशा: '+(bull?'CALL ख़रीदना या बुल कॉल-स्प्रेड/पुट क्रेडिट-स्प्रेड':'PUT ख़रीदना या बियर पुट-स्प्रेड/कॉल क्रेडिट-स्प्रेड'),'एंट्री: '+(sig.confirm&&sig.confirm[0]||'—'),'अमान्यता: '+(sig.invalid&&sig.invalid[0]||'—')]});return out}
+  const c=ac.calc,rows=ac.st.parsed.rows[ac.ex],step=c.step;
+  const row=K=>rows.find(r=>r.K===K);
+  const w=Math.max(1,Math.round(SET.width))*step;
+  const tc=bull?'C':'P';const side=bull?'ce':'pe';
+  const common=[ 'एक्सपायरी: '+ac.ex+' (DTE '+ac.dte+' दिन)','अंडरलाइंग: '+INST[inst].name+' '+fmtN(ac.spot),'एंट्री-पुष्टि: '+(sig.confirm&&sig.confirm[0]||'—'),'अमान्यता (इनवैलिडेशन): '+(sig.invalid&&sig.invalid[0]||'—')];
+  const ev=[];if(ac.dte<=1)ev.push('एक्सपायरी के क़रीब: थीटा-क्षय और गैप का जोखिम बहुत ज़्यादा');if(fin(sig.vix.pct)&&sig.vix.pct>5)ev.push('VIX चढ़ रहा है: प्रीमियम महँगे हो सकते हैं');ev.push('RBI/US डेटा/नतीजों जैसी घटनाएँ अपने-आप नहीं जोड़ी गईं; ख़बरें अलग देखें');
+  // 1) सिंगल ख़रीद
+  const a=row(c.atm.K);const s1=a&&a[side];
+  if(s1&&fin(s1.ltp)&&s1.ltp>0){
+    const sl=s1.ltp*(1-SET.slPct/100),tg=s1.ltp+(s1.ltp-sl)*SET.rr;
+    const spr=fin(s1.bid)&&fin(s1.ask)&&s1.ask>0?((s1.ask-s1.bid)/s1.ask*100):NaN;
+    out.push({title:(bull?'CALL':'PUT')+' ख़रीद (ATM '+fmtN(a.K,0)+')',tone:bull?'green':'red',lines:common.concat(['प्रीमियम (LTP): '+fmtN(s1.ltp)+lotTxt(s1.ltp),'अधिकतम नुकसान: प्रीमियम '+fmtN(s1.ltp)+lotTxt(s1.ltp)+' (सैद्धांतिक अधिकतम)','ब्रेक-ईवन (एक्सपायरी पर): '+fmtN(bull?a.K+s1.ltp:a.K-s1.ltp),'SL विधि: प्रीमियम '+SET.slPct+'% गिरे ('+fmtN(sl)+') या अंडरलाइंग इनवैलिडेशन पर, जो पहले हो','टार्गेट विधि: रिस्क का '+SET.rr+'x ('+fmtN(tg)+'): अनुमान, गारंटी नहीं','लिक्विडिटी: वॉल्यूम '+fmtI(s1.vol)+' · OI '+fmtI(s1.oi)+' · बिड-आस्क स्प्रेड '+(fin(spr)?spr.toFixed(1)+'%':'उपलब्ध नहीं'),'IV '+(fin(s1.iv)?s1.iv.toFixed(1)+'%':'—')+' · थीटा: चेन में नहीं, DTE '+ac.dte+' दिन']).concat(ev.map(x=>'जोखिम: '+x))});
+  }
+  // 2) डेबिट स्प्रेड
+  const b1=row(c.atm.K),b2=row(bull?c.atm.K+w:c.atm.K-w);
+  if(b1&&b2&&b1[side]&&b2[side]&&fin(b1[side].ltp)&&fin(b2[side].ltp)){
+    const legs=[{t:tc,side:1,K:b1.K,prem:b1[side].ltp},{t:tc,side:-1,K:b2.K,prem:b2[side].ltp}];const st=legsStats(legs);
+    if(fin(st.maxProfit)&&fin(st.maxLoss)&&st.maxLoss<0)out.push({title:(bull?'बुल कॉल-स्प्रेड (डेबिट)':'बियर पुट-स्प्रेड (डेबिट)')+' '+fmtN(b1.K,0)+'/'+fmtN(b2.K,0),tone:bull?'green':'red',lines:common.concat(['खरीदें '+tc+' '+fmtN(b1.K,0)+' @'+fmtN(legs[0].prem)+' · बेचें '+tc+' '+fmtN(b2.K,0)+' @'+fmtN(legs[1].prem),'अधिकतम नुकसान (परिभाषित): '+fmtN(-st.maxLoss)+lotTxt(-st.maxLoss),'अधिकतम लाभ: '+fmtN(st.maxProfit)+lotTxt(st.maxProfit),'ब्रेक-ईवन: '+st.be.map(x=>fmtN(x)).join(', '),'रिस्क/रिवॉर्ड: 1 : '+fmtN(st.maxProfit/-st.maxLoss),'यह एक्सपायरी का अधिकतम है; बीच में प्रीमियम अलग होगा। गारंटी नहीं।']).concat(ev.map(x=>'जोखिम: '+x))});
+  }
+  // 3) क्रेडिट स्प्रेड (सपोर्ट/रेज़िस्टेंस के बाहर शॉर्ट)
+  const lvl=bull?(c.sup[0]&&c.sup[0].K):(c.res[0]&&c.res[0].K);
+  const shortK=fin(lvl)?lvl:c.atm.K;const ct=bull?'P':'C';const cs=bull?'pe':'ce';
+  const sr=row(shortK),lr=row(bull?shortK-w:shortK+w);
+  if(sr&&lr&&sr[cs]&&lr[cs]&&fin(sr[cs].ltp)&&fin(lr[cs].ltp)){
+    const legs=[{t:ct,side:-1,K:sr.K,prem:sr[cs].ltp},{t:ct,side:1,K:lr.K,prem:lr[cs].ltp}];const st=legsStats(legs);
+    if(fin(st.maxProfit)&&fin(st.maxLoss)&&st.maxProfit>0)out.push({title:(bull?'बुल पुट-स्प्रेड (क्रेडिट)':'बियर कॉल-स्प्रेड (क्रेडिट)')+' '+fmtN(sr.K,0)+'/'+fmtN(lr.K,0),tone:bull?'green':'red',lines:common.concat(['बेचें '+ct+' '+fmtN(sr.K,0)+' @'+fmtN(legs[0].prem)+' · खरीदें '+ct+' '+fmtN(lr.K,0)+' @'+fmtN(legs[1].prem)+(fin(lvl)?' (शॉर्ट स्ट्राइक = सबसे ऊँचे OI वाला '+(bull?'सपोर्ट':'रेज़िस्टेंस')+')':' (ATM)'),'अधिकतम नुकसान (परिभाषित): '+fmtN(-st.maxLoss)+lotTxt(-st.maxLoss),'अधिकतम लाभ (नेट क्रेडिट): '+fmtN(st.maxProfit)+lotTxt(st.maxProfit),'ब्रेक-ईवन: '+st.be.map(x=>fmtN(x)).join(', '),'रिस्क/रिवॉर्ड: 1 : '+fmtN(st.maxProfit/-st.maxLoss),'मार्जिन: ब्रोकर से पुष्टि करें; मैं हार्डकोड नहीं करता। OI-सपोर्ट/रेज़िस्टेंस टूट भी सकता है।']).concat(ev.map(x=>'जोखिम: '+x))});
+  }
+  if(!out.length)out.push({title:'सेटअप नहीं बना',tone:'grey',lines:['ज़रूरी स्ट्राइक के LTP चेन में नहीं मिले।']});
+  return out;
+}
+
+/* ===== ख़बरें ===== */
+const FEEDS=[
+ {id:'bbcw',name:'BBC World',url:'https://feeds.bbci.co.uk/news/world/rss.xml'},
+ {id:'bbcb',name:'BBC Business',url:'https://feeds.bbci.co.uk/news/business/rss.xml'},
+ {id:'et',name:'Economic Times Markets',url:'https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms'},
+ {id:'hindu',name:'The Hindu Business',url:'https://www.thehindu.com/business/feeder/default.rss'},
+ {id:'aje',name:'Al Jazeera',url:'https://www.aljazeera.com/xml/rss/all.xml'}
+];
+const KW={
+ rel:/\b(war|conflict|ceasefire|truce|peace|missile|attack|strike|sanction|tariff|trade (deal|agreement|talks|war)|oil|crude|opec|brent|rbi|fed|inflation|gdp|rate (cut|hike)|interest rate|sensex|nifty|rupee|stock market|shares|economy|budget|export|import|iran|israel|gaza|ukraine|russia|china|taiwan|pakistan|red sea|hormuz)\b/i,
+ neg:/\b(war|escalat\w*|attack\w*|missile\w*|invasion|sanction\w*|tariff\w*|rate hike|hike|surge in oil|oil (price )?(jumps|surges|spikes)|recession|crash|plunge\w*|disrupt\w*|blockade)\b/i,
+ pos:/\b(ceasefire|truce|peace (deal|talks|agreement)|de-?escalat\w*|trade (deal|agreement)|rate cut|stimulus|eases|easing|rally|oil (falls|drops|slides))\b/i,
+ hedge:/\b(says?|claims?|alleged\w*|reportedly|unconfirmed|sources|may|could|might|rumou?r\w*|expected to|plans? to|warns?)\b/i
+};
+const COUNTRIES=['India','China','Pakistan','US','United States','America','Russia','Ukraine','Israel','Iran','Gaza','Lebanon','Yemen','Taiwan','Saudi','UAE','Japan','Europe','EU','UK','Britain','Venezuela','North Korea','South Korea','Syria','Iraq'];
+function classifyNews(title){
+  const rel=KW.rel.test(title);if(!rel)return null;
+  const n=KW.neg.test(title),p=KW.pos.test(title);
+  const impact=n&&p?'MIXED':n?'NEGATIVE':p?'POSITIVE':(/\b(oil|crude|opec|brent)\b/i.test(title)?'MIXED':'UNCERTAIN');
+  const who=COUNTRIES.filter(c=>new RegExp('\\b'+c+'\\b').test(title)).slice(0,5);
+  const hedged=KW.hedge.test(title);
+  const ch=[];if(/\b(oil|crude|opec|brent|hormuz|red sea)\b/i.test(title))ch.push('क्रूड/महँगाई');if(/\b(tariff|sanction|trade)\b/i.test(title))ch.push('निर्यात/FII');if(/\b(rbi|fed|rate|inflation)\b/i.test(title))ch.push('ब्याज दर/तरलता');if(/\b(war|missile|attack|conflict|ceasefire)\b/i.test(title))ch.push('जोखिम-भाव/VIX');
+  return{impact,who,hedged,ch};
+}
+const normT=t=>String(t).toLowerCase().replace(/[^a-z0-9ऀ-ॿ\s]/g,' ').split(/\s+/).filter(w=>w.length>2);
+function dedupeNews(items){
+  const out=[];
+  for(const it of items.slice().sort((a,b)=>(b.pub||0)-(a.pub||0))){
+    const A=new Set(normT(it.title));let dup=false;
+    for(const o of out){if(o.link&&it.link&&o.link===it.link){dup=true;break}const B=new Set(normT(o.title));let i=0;A.forEach(w=>{if(B.has(w))i++});const u=A.size+B.size-i;if(u>0&&i/u>=0.7){dup=true;break}}
+    if(!dup)out.push(it);
+  }
+  return out;
+}
+function parseRss(xml){
+  const d=new DOMParser().parseFromString(xml,'text/xml');if(d.querySelector('parsererror'))throw new Error('RSS पार्स नहीं हुआ');
+  const out=[];
+  d.querySelectorAll('item').forEach(i=>{const g=t=>{const e=i.getElementsByTagName(t)[0];return e?e.textContent.trim():''};out.push({title:g('title'),link:g('link'),pub:Date.parse(g('pubDate')),upd:NaN})});
+  d.querySelectorAll('entry').forEach(i=>{const g=t=>{const e=i.getElementsByTagName(t)[0];return e?e.textContent.trim():''};const l=i.getElementsByTagName('link')[0];out.push({title:g('title'),link:l?l.getAttribute('href'):'',pub:Date.parse(g('published')||g('updated')),upd:Date.parse(g('updated'))})});
+  return out;
+}
+async function fetchFeed(f){
+  let items;
+  if(SET.proxy){items=parseRss(await getText(proxyUrl(f.url)))}
+  else{const j=await getJSON('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(f.url));if(!j||j.status!=='ok'||!Array.isArray(j.items))throw new Error('rss2json: '+(j&&j.message||'अमान्य जवाब'));
+    items=j.items.map(i=>({title:String(i.title||'').trim(),link:i.link,pub:i.pubDate?Date.parse(String(i.pubDate).replace(' ','T')+'Z'):NaN,upd:NaN}))}
+  return items.filter(i=>i.title&&fin(i.pub)).map(i=>Object.assign(i,{pubr:f.name}));
+}
+async function refreshNews(){
+  S.newsTry=NOW();const all=[];
+  for(const f of FEEDS){const d=diagRec('news:'+f.id,'न्यूज़ · '+f.name);d.tries++;d.lastTry=NOW();
+    try{const it=await fetchFeed(f);all.push(...it);d.lastOk=NOW();d.err=null;d.fails=0;delete S.newsErr[f.id]}catch(e){d.fails++;d.err=errMsg(e);S.newsErr[f.id]=d.err}}
+  if(all.length){S.newsOk=NOW()}
+  const maxMs=SET.newsMaxH*3600000,now=NOW();
+  const list=all.filter(i=>now-i.pub<=maxMs&&i.pub<=now+3600000).map(i=>Object.assign(i,{cls:classifyNews(i.title)})).filter(i=>i.cls);
+  S.news=dedupeNews(list).slice(0,40);
+}
+
+/* ===== रिफ़्रेश ===== */
+async function fetchQuote(key){
+  const d=diagRec('q:'+key,'Yahoo · '+SYM[key].y);d.tries++;d.lastTry=NOW();
+  const path='/v8/finance/chart/'+encodeURIComponent(SYM[key].y)+'?range=1d&interval=5m&includePrePost=false';
+  const hosts=['https://query1.finance.yahoo.com','https://query2.finance.yahoo.com'];
+  let lastE=null;
+  for(let i=0;i<(SET.proxy?3:2);i++){
+    try{
+      const url=i<2?hosts[i]+path:proxyUrl(hosts[0]+path);
+      const q=parseChart(await getJSON(url),SYM[key].y);
+      if(SYM[key].cur&&q.cur&&q.cur!==SYM[key].cur)q.warn.push('मुद्रा '+q.cur+' (अपेक्षित '+SYM[key].cur+')');
+      S.Q[key]=q;delete S.qErr[key];d.lastOk=NOW();d.err=null;d.fails=0;d.until=0;return;
+    }catch(e){lastE=e}
+  }
+  d.fails++;d.err=errMsg(lastE);d.until=NOW()+Math.min(300000,15000*Math.pow(2,Math.min(d.fails,5)));S.qErr[key]=d.err;
+}
+async function fetchViaProxy(){
+  if(!SET.proxy)return;
+  const now=NOW();
+  if(now-S.fiiTry>1800000){S.fiiTry=now;const d=diagRec('fii','NSE FII/DII (प्रॉक्सी)');d.tries++;d.lastTry=now;
+    try{const r=parseFiiDii(await getJSON(proxyUrl('https://www.nseindia.com/api/fiidiiTradeReact')));const ref=r.fii||r.dii;const ms=parseNseDate(ref.rep);
+      S.fii={fii:r.fii,dii:r.dii,src:'NSE (प्रॉक्सी)',repText:ref.rep,repMs:ms,pubText:null,fetchedAt:NOW(),manual:false,fut:S.fii&&S.fii.fut||null};lsSet('fii',S.fii);d.lastOk=NOW();d.err=null}catch(e){d.fails++;d.err=errMsg(e)}}
+  if(now-S.chTry>120000&&S.inst==='NIFTY'){S.chTry=now;const d=diagRec('chain','NSE ऑप्शन चेन NIFTY (प्रॉक्सी)');d.tries++;d.lastTry=now;
+    try{const p=parseChain(await getJSON(proxyUrl('https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY')));const m=chainMatches(p,'NIFTY');if(!m.ok)throw new Error(m.msg);storeChain('NIFTY',p,'NSE (प्रॉक्सी)');d.lastOk=NOW();d.err=null}catch(e){d.fails++;d.err=errMsg(e)}}
+}
+function storeChain(inst,parsed,src){
+  const rows={};parsed.expiries.forEach(e=>rows[e]=parsed.rows[e]);
+  S.chains[inst]={src,loadedAt:NOW(),expiry:null,parsed:{expiries:parsed.expiries,rows,und:parsed.und,ts:parsed.ts,dup:parsed.dup,bad:parsed.bad}};
+  if(!lsSet('chains',S.chains))$('#chainMsg').innerHTML='<div class="warn">चेन इस सत्र में चलेगी पर ब्राउज़र स्टोरेज में सेव नहीं हो सकी (जगह कम)।</div>';
+}
+async function refreshAll(manual){
+  if(S.busy)return;
+  if(manual&&NOW()-S.lastManual<5000)return;
+  if(manual)S.lastManual=NOW();
+  S.busy=true;S.lastTry=NOW();render();
+  const keys=ST.ALL.filter(k=>manual||!(S.diag['q:'+k]&&S.diag['q:'+k].until>NOW()));
+  let i=0;await Promise.all(Array.from({length:4},async()=>{while(i<keys.length){const k=keys[i++];await fetchQuote(k)}}));
+  if(ST.ALL.some(k=>S.Q[k]&&S.diag['q:'+k]&&S.diag['q:'+k].lastOk&&NOW()-S.diag['q:'+k].lastOk<5000))S.lastOk=NOW();
+  await fetchViaProxy();
+  if(manual||NOW()-S.newsTry>600000)await refreshNews();
+  S.busy=false;render();
+}
+function autoState(){
+  if(document.hidden)return{on:false,why:'पेज छिपा है: ऑटो-रिफ़्रेश रुका'};
+  if(!S.lastOk)return{on:true,why:'पहला डेटा लोड हो रहा/हुआ नहीं'};
+  if(!indianClockOpen(NOW()))return{on:false,why:'भारतीय बाज़ार बंद/सप्ताहांत: ऑटो-रिफ़्रेश रुका (मैन्युअल रिफ़्रेश चलेगा)'};
+  return{on:true,why:'ऑटो: हर ~60 सेकंड (सेशन खुला)'};
+}
+function tick(){const a=autoState();if(a.on&&!S.busy&&NOW()-(S.lastTry||0)>=55000)refreshAll(false);else if(!S.busy)renderMeta()}
+
+/* ===== रेंडर ===== */
+function badge(st){return '<span class="badge '+st.cls+'">'+esc(st.s)+'</span>'}
+function srcLine(key){const st=statusOf(key),q=S.Q[key];return '<div class="sm mut">स्रोत: Yahoo Finance ('+esc(SYM[key].y)+') · '+(q&&q.exch?esc(q.exch)+' · ':'')+(q?'समय: '+fmtT(q.t)+' · उम्र '+ageStr(q.t):'')+'<br>'+esc(st.why)+'</div>'}
+function spark(q){
+  if(!q||!q.ok||q.bars.length<3)return'';
+  const b=q.bars,mn=Math.min(...b.map(x=>x.c)),mx=Math.max(...b.map(x=>x.c)),rg=mx-mn||1;
+  const pts=b.map((x,i)=>(i/(b.length-1)*300).toFixed(1)+','+(44-(x.c-mn)/rg*40).toFixed(1)).join(' ');
+  const up=b[b.length-1].c>=(fin(q.prev)?q.prev:b[0].c);
+  return '<svg class="sp" viewBox="0 0 300 46" preserveAspectRatio="none" role="img" aria-label="आज का 5-मिनट चार्ट"><polyline fill="none" stroke="'+(up?'#22c55e':'#ef4444')+'" stroke-width="1.8" points="'+pts+'"/></svg>'
+}
+function tile(key,extra){
+  const q=S.Q[key],st=statusOf(key);const p=pctOf(q),c=chgOf(q);
+  const v=q&&q.ok?'<div class="v">'+fmtN(q.price)+'</div><div class="'+(p>=0?'up':'dn')+' sm">'+(fin(c)?sgn(c)+fmtN(c)+' ('+sgn(p)+p.toFixed(2)+'%)':'बदलाव: पिछला क्लोज़ नहीं')+'</div><div class="sm mut">पिछला क्लोज़ '+fmtN(q.prev)+'</div>':'<div class="v dn">DATA UNAVAILABLE</div>';
+  return '<div class="tile"><div class="n">'+esc(SYM[key].name)+'</div>'+v+'<div style="margin-top:3px">'+badge(st)+'</div><div class="sm mut">'+(q?fmtT(q.t):esc(st.why))+'</div>'+(extra||'')+'</div>';
+}
+function renderMeta(){
+  const a=autoState();
+  $('#metaBar').innerHTML='<span>आख़िरी सफल रिफ़्रेश: <b>'+(S.lastOk?fmtT(S.lastOk):'अभी नहीं')+'</b></span><span>आख़िरी कोशिश: '+(S.lastTry?fmtT(S.lastTry):'—')+'</span><span>'+(a.on?'🟢':'⏸')+' '+esc(a.why)+'</span>'+(S.busy?'<span>⏳ लोड हो रहा…</span>':'');
+  $('#btnRefresh').disabled=S.busy;
+}
+function render(){
+  const inst=S.inst,I=INST[inst];
+  document.querySelectorAll('#instSeg button').forEach(b=>{b.classList.toggle('on',b.dataset.inst===inst);b.setAttribute('aria-selected',b.dataset.inst===inst)});
+  renderMeta();
+  const q=S.Q[inst],st=statusOf(inst),sig=computeSignal(inst),ac=activeChain(inst);
+  /* क्वोट */
+  const p=pctOf(q),c=chgOf(q);
+  $('#quote').innerHTML='<h2>'+esc(I.name)+' · '+I.ex+'</h2>'+(q&&q.ok?'<div class="big">'+fmtN(q.price)+'</div><div class="'+(p>=0?'up':'dn')+'">'+(fin(c)?sgn(c)+fmtN(c)+' ('+sgn(p)+p.toFixed(2)+'%)':'पिछला क्लोज़ नहीं मिला')+' <span class="mut sm">पिछला क्लोज़ '+fmtN(q.prev)+'</span></div>':'<div class="big dn">DATA UNAVAILABLE</div>')+'<div style="margin-top:4px">'+badge(st)+'</div>'+srcLine(inst)+spark(q)+(q&&q.warn.length?'<div class="warn">⚠ '+q.warn.map(esc).join(' · ')+'</div>':'')+(S.qErr[inst]?'<div class="err">त्रुटि: '+esc(S.qErr[inst])+'<br>यदि सभी पैनल में यही दिखे तो नीचे “डेटा स्रोत और डायग्नोस्टिक” देखें।</div>':'');
+  /* सिग्नल */
+  const sc=sig.score;const ic={green:'▲',red:'▼',yellow:'■',grey:'●'}[sig.color];
+  const lis=a=>a&&a.length?'<ul>'+a.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'';
+  $('#signal').innerHTML='<div class="sig '+sig.color+'" role="status"><div class="t">'+ic+' '+esc(sig.label)+'</div><div>'+esc(sig.hi)+'</div>'+(fin(sc)?'<div class="sm mut" style="margin-top:4px">SIGNAL SCORE: <b>'+sgn(sc)+sc.toFixed(0)+'</b> / ±100 (संभावना नहीं)</div>':'')+(sig.info?'<div class="sm mut">'+esc(sig.info)+'</div>':'')
+   +(sig.reasons&&sig.reasons.length?'<div style="margin-top:6px"><b>कारण:</b>'+lis(sig.reasons)+'</div>':'')
+   +(sig.sup&&sig.sup.length?'<div style="margin-top:6px"><b>समर्थन:</b>'+lis(sig.sup.slice(0,3))+'</div>':'')
+   +(sig.conf&&sig.conf.length?'<div style="margin-top:6px"><b>विरोधी:</b>'+lis(sig.conf.slice(0,3))+'</div>':'')
+   +'<div class="note">यह निर्णय-सहायक संकेत है, ख़रीद/बिक्री का आदेश नहीं।</div></div>';
+  /* F&O सारांश */
+  let f='<h2>फ्यूचर्स/ऑप्शन सारांश · '+esc(I.name)+'</h2>';
+  const vq=S.Q.VIX,vst=statusOf('VIX');
+  f+='<div class="kv"><span>India VIX</span><span>'+(vq&&vq.ok?fmtN(vq.price)+' ('+sgn(pctOf(vq))+pctOf(vq).toFixed(2)+'%) '+badge(vst):'DATA UNAVAILABLE')+'</span></div>';
+  if(ac&&ac.calc&&!ac.err){const cc=ac.calc;const cs=statusOfChain(ac);
+    f+='<div class="kv"><span>एक्सपायरी / DTE</span><span>'+esc(ac.ex)+' · '+ac.dte+' दिन</span></div>'
+     +'<div class="kv"><span>PCR (कुल PE OI ÷ कुल CE OI)</span><span>'+(fin(cc.pcr)?cc.pcr.toFixed(2):'—')+'</span></div>'
+     +'<div class="kv"><span>सपोर्ट ज़ोन (सबसे ऊँचा PE OI)</span><span>'+(cc.sup.length?cc.sup.map(x=>fmtN(x.K,0)).join(' / '):'—')+'</span></div>'
+     +'<div class="kv"><span>रेज़िस्टेंस ज़ोन (सबसे ऊँचा CE OI)</span><span>'+(cc.res.length?cc.res.map(x=>fmtN(x.K,0)).join(' / '):'—')+'</span></div>'
+     +'<div class="kv"><span>ATM '+fmtN(cc.atm.K,0)+' IV</span><span>'+(fin(cc.atmIV)?cc.atmIV.toFixed(1)+'%':'—')+'</span></div>'
+     +'<div class="kv"><span>चेन स्रोत/स्थिति</span><span>'+esc(ac.st.src)+' · '+badge(cs)+'</span></div>';
+  }else{f+='<div class="kv"><span>ऑप्शन चेन</span><span class="dn">DATA UNAVAILABLE</span></div><div class="sm mut">'+(ac&&ac.err?esc(ac.err):'NSE चेन सीधे ब्राउज़र को नहीं मिलती। “ऑप्शन चेन” सेक्शन में JSON पेस्ट करें या प्रॉक्सी जोड़ें।')+'</div>'}
+  const fut=numOrNull(SET.fut[inst]);
+  f+='<div class="kv"><span>फ्यूचर्स भाव (मैन्युअल) / बेसिस</span><span>'+(fut&&q&&q.ok?fmtN(fut)+' <span class="badge b-manual">MANUAL</span> · बेसिस '+sgn(fut-q.price)+fmtN(fut-q.price)+' (फ्यूचर्स−कैश)':'उपलब्ध नहीं')+'</span></div>';
+  $('#fno').innerHTML=f;
+  /* FII/DII */
+  $('#flow').innerHTML='<h2>FII / DII (कैश-बाज़ार, पिछला सत्र)</h2>'+flowHtml();
+  /* GIFT + क्रूड */
+  const g=S.gift;let gt;
+  if(inst==='NIFTY'&&g&&fin(g.val)){const pp=g.prev>0?(g.val/g.prev-1)*100:NaN;const old=NOW()-g.savedAt>3600000;
+    gt='<div class="tile"><div class="n">GIFT NIFTY (NSE IX फ्यूचर्स)</div><div class="v">'+fmtN(g.val)+'</div><div class="'+(pp>=0?'up':'dn')+' sm">'+(fin(pp)?sgn(pp)+pp.toFixed(2)+'%':'')+'</div><div><span class="badge b-manual">MANUAL</span> '+(old?'<span class="badge b-last">1 घंटे से पुराना</span>':'')+'</div><div class="sm mut">आपने सेव किया: '+fmtT(g.savedAt)+'. फ्यूचर्स भाव है, कैश NIFTY से सीधी तुलना नहीं; गैप-डाउन की गारंटी नहीं।</div></div>';
+  }else gt='<div class="tile"><div class="n">GIFT NIFTY (NSE IX)</div><div class="v dn">DATA UNAVAILABLE</div><div class="sm mut">'+(inst==='NIFTY'?'कोई सत्यापित मुफ़्त API नहीं मिली। सेटिंग में मैन्युअल भाव डाल सकते हैं।':'GIFT NIFTY सिर्फ़ NIFTY से जुड़ा है, SENSEX से नहीं मिलाया जाता।')+'</div></div>';
+  $('#gc').innerHTML='<h2>GIFT NIFTY और क्रूड</h2><div class="grid">'+gt+tile('BRENT')+'</div><div class="note">महँगा क्रूड भारत के आयात-बिल/महँगाई/रुपये पर दबाव डालता है (आम तौर पर नकारात्मक)। GIFT/क्रूड का असर पहले से भाव में हो सकता है।</div>';
+  /* ग्लोबल */
+  $('#glob').innerHTML='<h2>ग्लोबल बाज़ार</h2><div class="grid">'+['DJI','IXIC','GSPC','N225','HSI','KS11','SSE','USDINR','GOLD'].map(k=>tile(k)).join('')+'</div><div class="note">US की मज़बूती आम तौर पर सहारा देती है; कमज़ोर रुपया/महँगा क्रूड/भू-राजनीतिक तनाव दबाव डालते हैं। हर पैनल अलग सेशन/इंस्ट्रूमेंट का है। फ्यूचर्स और कैश की सीधी तुलना न करें।</div>';
+  /* ख़बरें */
+  $('#newsTop').innerHTML='<h2>ताज़ा महत्वपूर्ण ख़बरें</h2>'+(S.news.length?S.news.slice(0,3).map(newsHtml).join(''):newsEmpty());
+  $('#newsAll').innerHTML=(S.news.length?S.news.map(newsHtml).join(''):newsEmpty())+'<div class="note">श्रेणी (POSITIVE/NEGATIVE/MIXED/UNCERTAIN) शीर्षक के कीवर्ड से लगाया अनुमान है, पुष्टि नहीं। ख़बर का असर पहले से भाव में शामिल हो सकता है। “अपुष्ट/दावा” तब लगता है जब शीर्षक में says/claims/reportedly जैसे शब्द हों। RSS में अपडेट-समय अक्सर नहीं होता।</div>';
+  /* विस्तृत */
+  $('#signalDetail').innerHTML=detailHtml(sig,ac);
+  $('#chainView').innerHTML=chainHtml(ac);
+  $('#setupView').innerHTML=setupHtml(buildSetups(sig,inst,ac));
+  $('#diag').innerHTML=diagHtml();
+  updateRc();
+}
+function statusOfChain(ac){const age=ac.age;const open=indianClockOpen(NOW());
+  if(!ac.st.parsed.ts&&ac.st.src.indexOf('प्रॉक्सी')<0)return{s:'LAST AVAILABLE',cls:'b-last'};
+  if(open&&age<=120000)return{s:'LIVE',cls:'b-live'};if(open&&age<=SET.staleMin*60000)return{s:'DELAYED',cls:'b-del'};return open?{s:'LAST AVAILABLE',cls:'b-last'}:{s:'MARKET CLOSED',cls:'b-closed'}}
+function newsEmpty(){const errs=Object.keys(S.newsErr);return '<div class="sm mut">'+(S.newsTry?'अभी कोई प्रासंगिक ताज़ा ख़बर नहीं मिली'+(errs.length?' (कुछ फ़ीड में त्रुटि: विवरण डायग्नोस्टिक में)':''):'ख़बरें अभी लोड नहीं हुईं')+'.</div>'}
+function newsHtml(n){
+  const l=safeLink(n.link),c=n.cls;const old=NOW()-n.pub>86400000;
+  return '<div class="news"><span class="tag '+c.impact+'">'+c.impact+'</span>'+(old?'<span class="tag UNCERTAIN">पुरानी >24 घंटे</span>':'')+'<br>'+(l?'<a href="'+esc(l)+'" target="_blank" rel="noopener noreferrer">'+esc(n.title)+'</a>':esc(n.title))
+   +'<div class="sm mut">प्रकाशक: '+esc(n.pubr)+' · प्रकाशित: '+fmtT(n.pub)+' · अपडेट: '+(fin(n.upd)?fmtT(n.upd):'उपलब्ध नहीं')+'</div>'
+   +'<div class="sm mut">पक्ष/देश: '+(c.who.length?esc(c.who.join(', ')):'शीर्षक में स्पष्ट नहीं')+' · '+(c.hedged?'<b>अपुष्ट/दावा-शैली शीर्षक</b>':'प्रकाशक की रिपोर्ट (हमने स्वतंत्र पुष्टि नहीं की)')+'</div>'
+   +'<div class="sm mut">संभावित चैनल: '+(c.ch.length?esc(c.ch.join(', ')):'अनिश्चित')+' (भारतीय इक्विटी/क्रूड/रुपया/VIX पर असर अनुमान)</div></div>';
+}
+function flowHtml(){
+  const f=S.fii;if(!f||!f.fii)return '<div class="kv"><span>स्थिति</span><span class="dn">DATA UNAVAILABLE</span></div><div class="sm mut">NSE की FII/DII रिपोर्ट सीधे ब्राउज़र को नहीं मिलती। सेटिंग में रिपोर्ट के आँकड़े भरें (या प्रॉक्सी जोड़ें)।</div>';
+  const row=(n,x)=>x?'<div class="kv"><span>'+n+' ख़रीद / बिक्री / नेट</span><span>'+fmtI(x.buy)+' / '+fmtI(x.sell)+' / <b class="'+(x.net>=0?'up':'dn')+'">'+sgn(x.net)+fmtI(x.net)+'</b></span></div>':'';
+  const w=[f.fii&&f.fii.warn&&('FII: '+f.fii.warn),f.dii&&f.dii.warn&&('DII: '+f.dii.warn)].filter(Boolean);
+  const age=fin(f.repMs)?Math.round((todayIST(NOW())-f.repMs)/86400000):null;
+  return row('FII/FPI कैश',f.fii)+row('DII कैश',f.dii)
+   +(f.fut&&fin(f.fut.l)&&fin(f.fut.s)?'<div class="kv"><span>FII इंडेक्स फ्यूचर्स (डेरिवेटिव्स, कैश से अलग)</span><span>लॉन्ग '+fmtI(f.fut.l)+' / शॉर्ट '+fmtI(f.fut.s)+' · नेट '+sgn(f.fut.l-f.fut.s)+fmtI(f.fut.l-f.fut.s)+'</span></div>':'<div class="sm mut">FII डेरिवेटिव पोज़िशन: उपलब्ध नहीं (कैश और डेरिवेटिव अलग चीज़ें हैं)।</div>')
+   +'<div class="sm mut">इकाई: ₹ करोड़ · रिपोर्टिंग तारीख: '+esc(f.repText||'—')+(age!==null?' ('+age+' दिन पहले)':'')+' · प्रकाशन: '+esc(f.pubText||'उपलब्ध नहीं')+' · स्रोत: '+esc(f.src)+(f.manual?' <span class="badge b-manual">MANUAL</span>':'')+' · दर्ज/फ़ेच: '+fmtT(f.fetchedAt)+'</div>'
+   +'<div class="warn">यह पिछले सत्र/EOD का डेटा है, इंट्राडे लाइव गतिविधि नहीं। इससे किसी ख़ास ट्रेडर की पहचान नहीं होती।</div>'+(w.length?'<div class="err">'+esc(w.join('; '))+'</div>':'');
+}
+function detailHtml(sig,ac){
+  let h='<div class="sm mut">स्कोर = Σ(वज़न × समूह-स्कोर) ÷ Σ(उपलब्ध वज़न) × 100, फिर VIX-डैम्पर। समूह-स्कोर −1 से +1। संबंधित संकेत एक समूह में औसत किए गए हैं ताकि दोहरी गिनती न हो।</div><div class="sc"><table><tr><th style="text-align:left">समूह</th><th>वज़न</th><th>स्कोर</th><th>योगदान</th></tr>';
+  const av=sig.groups.filter(g=>g.r&&g.w>0),ws=av.reduce((a,g)=>a+g.w,0);
+  sig.groups.forEach(g=>{h+='<tr><td style="text-align:left;white-space:normal">'+esc(g.name)+'</td><td>'+g.w+'</td><td>'+(g.r?sgn(g.r.s)+g.r.s.toFixed(2):'N/A')+'</td><td>'+(g.r&&ws?sgn(g.r.s)+(g.w*g.r.s/ws*100).toFixed(1):'—')+'</td></tr>';
+    h+='<tr><td colspan="4" style="text-align:left;white-space:normal" class="sm mut">'+(g.r?esc(g.r.note)+' — ':'डेटा अनुपलब्ध/अमान्य — ')+'सीमा: '+esc(g.lim)+'</td></tr>'});
+  h+='</table></div><div class="kv"><span>VIX डैम्पर</span><span>×'+sig.vix.damp+(sig.vix.note?' ('+esc(sig.vix.note)+')':'')+'</span></div>'
+   +'<div class="kv"><span>GREEN/RED शर्त</span><span>स्कोर ≥ +'+SET.thBull+' / ≤ '+SET.thBear+', 2+ स्वतंत्र समूह सहमत, कोई ठोस विरोधी नहीं, प्राइस के अलावा 2+ समूह उपलब्ध</span></div>';
+  if(sig.confirm)h+='<div><b>आवश्यक पुष्टि:</b><ul>'+sig.confirm.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>';
+  if(sig.invalid&&sig.invalid.length)h+='<div><b>सिग्नल अमान्य कब:</b><ul>'+sig.invalid.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>';
+  h+='<div><b>डेटा ताज़गी / सीमाएँ:</b><ul><li>'+esc(sig.status.s)+' — '+esc(sig.status.why)+'</li>'+sig.limits.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>';
+  return h;
+}
+function chainHtml(ac){
+  const inst=S.inst;
+  if(!ac)return '<div class="warn">'+esc(INST[inst].name)+' की कोई चेन लोड नहीं है: DATA UNAVAILABLE। नीचे पेस्ट/फ़ाइल से लोड करें।</div>';
+  let h='<div class="sm mut">स्रोत: '+esc(ac.st.src)+' · लोड: '+fmtT(ac.st.loadedAt)+(ac.st.parsed.ts?' · NSE समय-मुहर: '+fmtT(ac.st.parsed.ts):' · NSE समय-मुहर नहीं (लोड-समय से उम्र)')+'</div>';
+  if(ac.err)return h+'<div class="err">'+esc(ac.err)+'</div>';
+  if(ac.mm.warn)h+='<div class="warn">'+esc(ac.mm.warn)+'</div>';
+  if(!ac.fresh)h+='<div class="warn">चेन '+ageStr(ac.t)+' पुरानी है: सिग्नल में शामिल नहीं।</div>';
+  if(!indianClockOpen(NOW()))h+='<div class="warn">बाज़ार बंद: चेन सिर्फ़ जानकारी के लिए, सिग्नल में नहीं।</div>';
+  const ex=ac.st.parsed.expiries.filter(e=>parseNseDate(e)>=todayIST(NOW()));
+  h+='<label for="expSel">एक्सपायरी</label><select id="expSel">'+ex.map(e=>'<option'+(e===ac.ex?' selected':'')+'>'+esc(e)+'</option>').join('')+'</select>';
+  const c=ac.calc;if(!c)return h+'<div class="err">गणना संभव नहीं</div>';
+  const rows=ac.st.parsed.rows[ac.ex],ai=rows.findIndex(r=>r.K===c.atm.K),sl=rows.slice(Math.max(0,ai-6),ai+7);
+  h+='<div class="kv"><span>PCR (OI) = ΣPE OI ÷ ΣCE OI</span><span>'+(fin(c.pcr)?c.pcr.toFixed(3):'—')+'</span></div><div class="kv"><span>PCR (वॉल्यूम)</span><span>'+(fin(c.pcrV)?c.pcrV.toFixed(3):'—')+'</span></div><div class="kv"><span>कुल CE OI / PE OI</span><span>'+fmtI(c.ceOI)+' / '+fmtI(c.peOI)+'</span></div><div class="kv"><span>कुल ΔOI CE / PE</span><span>'+fmtI(c.ceC)+' / '+fmtI(c.peC)+'</span></div><div class="kv"><span>मैक्स-पेन (OI से अनुमान)</span><span>'+fmtN(c.maxPain,0)+'</span></div><div class="kv"><span>स्ट्राइक-स्टेप</span><span>'+fmtN(c.step,0)+'</span></div>';
+  if(c.incomplete)h+='<div class="note">'+c.incomplete+' स्ट्राइक में एक तरफ़ का डेटा नहीं (गणना से बाहर)।</div>';
+  h+='<div class="sc" style="margin-top:6px"><table><tr><th>CE OI</th><th>CE ΔOI</th><th>CE LTP</th><th>CE बिल्ड-अप</th><th class="k">स्ट्राइक</th><th>PE LTP</th><th>PE ΔOI</th><th>PE OI</th><th>PE बिल्ड-अप</th></tr>';
+  sl.forEach(r=>{const bc=classifyBuildup(r.ce&&r.ce.chg,r.ce&&r.ce.coi),bp=classifyBuildup(r.pe&&r.pe.chg,r.pe&&r.pe.coi);
+    h+='<tr'+(r.K===c.atm.K?' class="atm"':'')+'><td>'+fmtI(r.ce&&r.ce.oi)+(c.maxCE===r.K?' ★':'')+'</td><td>'+fmtI(r.ce&&r.ce.coi)+'</td><td>'+fmtN(r.ce&&r.ce.ltp)+'</td><td>'+(bc||'—')+'</td><td class="k">'+fmtN(r.K,0)+'</td><td>'+fmtN(r.pe&&r.pe.ltp)+'</td><td>'+fmtI(r.pe&&r.pe.coi)+'</td><td>'+fmtI(r.pe&&r.pe.oi)+(c.maxPE===r.K?' ★':'')+'</td><td>'+(bp||'—')+'</td></tr>'});
+  h+='</table></div><div class="note">★ = सबसे ज़्यादा OI। बिल्ड-अप = LTP बदलाव × OI बदलाव (दोनों ऊपर = Long Build-up, भाव नीचे+OI ऊपर = Short Build-up, भाव ऊपर+OI नीचे = Short Covering, दोनों नीचे = Long Unwinding)। विकल्प-स्तर पर इसका मतलब: CE Long Build-up ≈ तेज़ी का दाँव, CE Short Build-up ≈ कॉल राइटिंग (मंदी/सीमित तेज़ी); PE के लिए उलटा। <b>OI अकेले ख़रीदार/बेचने वाला नहीं बताता; PCR/OI-कंसन्ट्रेशन से सपोर्ट/रेज़िस्टेंस या दिशा की गारंटी नहीं।</b> वॉल्यूम बनाम OI बदलाव और वोलैटिलिटी का अनुमान: ATM IV '+(fin(c.atmIV)?c.atmIV.toFixed(1)+'%':'उपलब्ध नहीं')+'; लिक्विडिटी-स्वीप/फेल्ड-ब्रेकआउट की पहचान के लिए पर्याप्त इतिहास इस पेज में नहीं है, इसलिए नहीं दिखाया।</div>';
+  h+='<div class="note">सपोर्ट/रेज़िस्टेंस विधि: ATM या नीचे के स्ट्राइक में सबसे ऊँचा PE OI = सपोर्ट ज़ोन; ATM या ऊपर के स्ट्राइक में सबसे ऊँचा CE OI = रेज़िस्टेंस ज़ोन (टॉप-2)।</div>';
+  return h;
+}
+function setupHtml(list){return list.map(s=>'<div class="card" style="border-color:var(--'+({green:'g',red:'r',grey:'gr'}[s.tone]||'gr')+')"><b>'+esc(s.title)+'</b><ul>'+s.lines.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>').join('')+'<div class="note">ये उदाहरण-संरचनाएँ हैं, सलाह नहीं। लक्ष्य गारंटी नहीं। लॉट साइज़/मार्जिन ख़ुद सत्यापित करें।</div>'}
+function diagHtml(){
+  const ds=Object.values(S.diag);
+  let h='<div class="sm mut">किसी स्रोत में “नेटवर्क/CORS ब्लॉक” का मतलब: ब्राउज़र ने सर्वर का जवाब पढ़ने नहीं दिया। इसे बायपास नहीं किया जाता। विकल्प: ऐप को HTTPS होस्ट (GitHub Pages) पर चलाएँ या अपना प्रॉक्सी जोड़ें।</div>';
+  if(!ds.length)return h+'<div class="note">अभी कोई अनुरोध नहीं हुआ।</div>';
+  h+='<div class="sc"><table><tr><th style="text-align:left">स्रोत</th><th>कोशिश</th><th>असफल</th><th>आख़िरी सफल</th><th style="text-align:left">त्रुटि</th></tr>';
+  ds.forEach(d=>{h+='<tr><td style="text-align:left">'+esc(d.name)+'</td><td>'+d.tries+'</td><td>'+d.fails+'</td><td>'+(d.lastOk?fmtT(d.lastOk):'—')+'</td><td style="text-align:left;white-space:normal;color:'+(d.err?'var(--r)':'inherit')+'">'+esc(d.err||'ठीक')+'</td></tr>'});
+  return h+'</table></div>';
+}
+function updateRc(){
+  const lot=numOrNull(SET.lot[S.inst]);const r=riskLots(numOrNull($('#rcCap').value),numOrNull($('#rcPct').value),numOrNull($('#rcEntry').value),numOrNull($('#rcSl').value),lot);
+  let t;if(r.err)t=r.err;else{t='अधिकतम जोखिम रक़म: ₹'+fmtN(r.risk)+' · प्रति-यूनिट नुकसान ₹'+fmtN(r.perUnit);
+    if(r.lots===null)t+=' · अधिकतम यूनिट ≈ '+fmtI(r.units)+' ('+r.note+')';else if(r.lots<1)t+=' · 1 लॉट का रिस्क ₹'+fmtN(r.perLot)+' इस सीमा से ज़्यादा है। <b>इस रिस्क में ट्रेड न लें</b>।';else t+=' · अधिकतम लॉट: <b>'+r.lots+'</b> (वास्तविक रिस्क ₹'+fmtN(r.realRisk)+')';}
+  $('#rcOut').innerHTML=t;
+}
+
+/* ===== इवेंट्स ===== */
+function msg(id,type,t){$(id).innerHTML='<div class="'+type+'">'+esc(t)+'</div>'}
+function loadChainText(txt){
+  const inst=S.inst;
+  try{
+    if(!txt||!txt.trim())throw new Error('कुछ पेस्ट नहीं किया');
+    const p=parseChain(txt);
+    const m=chainMatches(p,inst);if(!m.ok)throw new Error(m.msg);
+    if(!pickExpiry(p))throw new Error('सभी एक्सपायरी बीत चुकी हैं');
+    storeChain(inst,p,'NSE JSON (मैन्युअल पेस्ट)');
+    msg('#chainMsg',m.warn?'warn':'warn','चेन लोड हुई ('+INST[inst].name+')'+(m.warn?' · '+m.warn:'')+(p.dup?' · '+p.dup+' डुप्लिकेट हटाए':'')+(p.bad?' · '+p.bad+' अमान्य पंक्तियाँ छोड़ीं':''));
+    render();
+  }catch(e){msg('#chainMsg','err','चेन अस्वीकार: '+(e.message||e))}
+}
+function bind(){
+  document.querySelectorAll('#instSeg button').forEach(b=>b.addEventListener('click',()=>{S.inst=b.dataset.inst;lsSet('inst',S.inst);$('#chainMsg').innerHTML='';fillInputs();render()}));
+  $('#btnRefresh').addEventListener('click',()=>refreshAll(true));
+  $('#chainLoad').addEventListener('click',()=>loadChainText($('#chainText').value));
+  $('#chainClear').addEventListener('click',()=>{S.chains[S.inst]=null;lsSet('chains',S.chains);msg('#chainMsg','warn','चेन हटाई');render()});
+  $('#chainFile').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>20e6){msg('#chainMsg','err','फ़ाइल बहुत बड़ी');return}const r=new FileReader();r.onload=()=>loadChainText(String(r.result));r.onerror=()=>msg('#chainMsg','err','फ़ाइल पढ़ी नहीं गई');r.readAsText(f)});
+  document.addEventListener('change',e=>{if(e.target.id==='expSel'){const st=S.chains[S.inst];if(st){st.expiry=e.target.value;lsSet('chains',S.chains);render()}}});
+  ['rcCap','rcPct','rcEntry','rcSl'].forEach(id=>$('#'+id).addEventListener('input',()=>{SET.cap=numOrNull($('#rcCap').value)||0;SET.riskPct=numOrNull($('#rcPct').value)||0;updateRc();}));
+  $('#saveSet').addEventListener('click',()=>{
+    const n=(id,d,lo,hi)=>{const v=numOrNull($('#'+id).value);return v!==null&&v>=lo&&v<=hi?v:d};
+    const w=SET.weights;w.price=n('wPrice',w.price,0,100);w.global=n('wGlobal',w.global,0,100);w.macro=n('wMacro',w.macro,0,100);w.option=n('wOption',w.option,0,100);w.flow=n('wFlow',w.flow,0,100);
+    SET.staleMin=n('stMin',SET.staleMin,1,240);SET.thBull=n('thBull',SET.thBull,5,95);SET.thBear=n('thBear',SET.thBear,-95,-5);
+    SET.lot.NIFTY=$('#lotN').value.trim();SET.lot.SENSEX=$('#lotS').value.trim();SET.slPct=n('slPct',SET.slPct,1,95);SET.rr=n('rr',SET.rr,0.5,10);SET.width=Math.round(n('width',SET.width,1,20));
+    SET.fut[S.inst]=$('#futManual').value.trim();
+    const pr=$('#proxy').value.trim();if(pr&&!safeLink(pr)){alert('प्रॉक्सी URL अमान्य');return}SET.proxy=pr;
+    SET.cap=numOrNull($('#rcCap').value)||SET.cap;SET.riskPct=numOrNull($('#rcPct').value)||SET.riskPct;
+    lsSet('set',SET);fillInputs();render();alert('सेटिंग्स सेव हुईं');
+  });
+  $('#fSave').addEventListener('click',()=>{
+    const v=id=>numOrNull($('#'+id).value);const fB=v('fB'),fS=v('fS'),dB=v('dB'),dS=v('dS');
+    const rd=$('#fDate').value;
+    if(!rd||fB===null||fS===null||fB<0||fS<0){msg('#fMsg','err','रिपोर्टिंग तारीख और FII ख़रीद/बिक्री ज़रूरी (≥0)');return}
+    if((dB===null)!==(dS===null)){msg('#fMsg','err','DII की ख़रीद और बिक्री दोनों भरें या दोनों छोड़ें');return}
+    const rms=Date.parse(rd+'T00:00:00Z');if(!fin(rms)||rms>todayIST(NOW())){msg('#fMsg','err','रिपोर्टिंग तारीख भविष्य की नहीं हो सकती');return}
+    const L=v('fL'),Sh=v('fSh');
+    S.fii={fii:{buy:fB,sell:fS,net:fB-fS},dii:dB===null?null:{buy:dB,sell:dS,net:dB-dS},src:'NSE रिपोर्ट (आपकी मैन्युअल एंट्री)',repText:rd,repMs:rms,pubText:$('#fPub').value||null,fetchedAt:NOW(),manual:true,fut:L!==null&&Sh!==null?{l:L,s:Sh}:null};
+    lsSet('fii',S.fii);msg('#fMsg','warn','सेव हुआ');render();
+  });
+  $('#fClear').addEventListener('click',()=>{S.fii=null;lsDel('fii');msg('#fMsg','warn','हटाया');render()});
+  $('#gSave').addEventListener('click',()=>{const a=numOrNull($('#gV').value),b=numOrNull($('#gP').value);if(a===null||b===null||a<=0||b<=0){msg('#gMsg','err','दोनों मान > 0 भरें');return}S.gift={val:a,prev:b,savedAt:NOW()};lsSet('gift',S.gift);msg('#gMsg','warn','सेव हुआ; 1 घंटे बाद पुराना माना जाएगा');render()});
+  $('#gClear').addEventListener('click',()=>{S.gift=null;lsDel('gift');msg('#gMsg','warn','हटाया');render()});
+  $('#resetAll').addEventListener('click',()=>{if(confirm('सारा सेव किया डेटा मिटाएँ?')){['set','inst','chains','fii','gift'].forEach(lsDel);location.reload()}});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!S.lastOk||NOW()-S.lastOk>60000))refreshAll(false);renderMeta()});
+}
+function fillInputs(){
+  const set=(id,v)=>{const e=$('#'+id);if(e)e.value=v===undefined||v===null?'':v};
+  const w=SET.weights;set('wPrice',w.price);set('wGlobal',w.global);set('wMacro',w.macro);set('wOption',w.option);set('wFlow',w.flow);set('stMin',SET.staleMin);set('thBull',SET.thBull);set('thBear',SET.thBear);
+  set('lotN',SET.lot.NIFTY);set('lotS',SET.lot.SENSEX);set('slPct',SET.slPct);set('rr',SET.rr);set('width',SET.width);set('futManual',SET.fut[S.inst]);set('proxy',SET.proxy);
+  set('rcCap',SET.cap);set('rcPct',SET.riskPct);
+  const f=S.fii;if(f&&f.manual){set('fDate',f.repText);set('fPub',f.pubText);set('fB',f.fii.buy);set('fS',f.fii.sell);if(f.dii){set('dB',f.dii.buy);set('dS',f.dii.sell)}if(f.fut){set('fL',f.fut.l);set('fSh',f.fut.s)}}
+  if(S.gift){set('gV',S.gift.val);set('gP',S.gift.prev)}
+}
+window.DASH={S,SET,DEF,parseChart,statusOf,computeSignal,parseChain,calcChain,pickExpiry,chainMatches,activeChain,legsStats,pnl,riskLots,buildSetups,classifyNews,dedupeNews,parseFiiDii,classifyBuildup,parseNseTs,parseNseDate,pctOf,chgOf,indianClockOpen,istParts,fmtT,render,refreshAll,loadChainText,parseRss,safeLink};
+bind();fillInputs();render();
+refreshAll(false);
+setInterval(tick,15000);
+</script>
+</body>
+</html>
